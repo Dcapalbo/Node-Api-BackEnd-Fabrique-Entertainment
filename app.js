@@ -11,12 +11,10 @@ const multer = require('multer');
 const helmet = require('helmet'); 
 const compression = require('compression'); 
 const morgan = require('morgan'); 
-const errorController = require('./controllers/error'); 
-const User = require('./models/user');
 
 // Take the mongodb Uri 
 const MONGODB_URI =
-  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@my-testing-cluster.nmev1.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@fabrique-db.nmev1.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 // inizialize express 
 const app = express();
@@ -29,7 +27,7 @@ const store = new MongoDBStore({
 // Inizialize csrf protection
 const csrfProtection = csrf();
 
-// Building filreStorage for images 
+// Building file Storage for images 
 // diskStorage implementation
 const fileStorage = multer.diskStorage({
   // destination 
@@ -105,36 +103,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  if (!req.session.user) {
-    return next();
-  }
-  User.findById(req.session.user._id)
-    .then(user => {
-      if (!user) {
-        return next();
-      }
-      req.user = user;
-      next();
-    })
-    .catch(err => {
-      next(new Error(err));
-    });
-});
-
 // Inizialise the routes 
-
-app.get('/500', errorController.get500);
-
-app.use(errorController.get404);
-
-app.use((error, req, res, next) => {
-  res.status(500).render('500', {
-    pageTitle: 'Error!',
-    path: '/500',
-    isAuthenticated: req.session.isLoggedIn
-  });
-});
 
 // Inizialise the server 
 mongoose
