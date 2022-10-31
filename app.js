@@ -20,7 +20,8 @@ const MONGODB_URI =
 const app = express();
 // Store the sessions collection
 const store = new MongoDBStore({
-  uri: MONGODB_URI
+  uri: MONGODB_URI,
+  collection: 'sessions'
 });
 
 // Inizialize csrf protection
@@ -87,7 +88,7 @@ app.use(
     secret: 'my secret',
     resave: false,
     saveUninitialized: false,
-    store: store
+    store
   })
 );
 
@@ -95,21 +96,16 @@ app.use(
 app.use(csrfProtection);
 app.use(flash());
 
-// Getting response for the authentication and the csrf token 
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
-
 // Inizialise the routes 
 
 // Inizialise the server 
 mongoose
   .connect(MONGODB_URI)
   .then(result => {
+    console.log("connection with the database complete")
     app.listen(process.env.PORT || 5000);
   })
   .catch(err => {
+    console.log("connection error",)
     console.log(err);
   });
