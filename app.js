@@ -14,14 +14,13 @@ const morgan = require('morgan');
 
 // Take the mongodb Uri 
 const MONGODB_URI =
-  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@fabrique-db.nmev1.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@fabrique-db.mfubcus.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 // inizialize express 
 const app = express();
 // Store the sessions collection
 const store = new MongoDBStore({
-  uri: MONGODB_URI,
-  collection: 'sessions'
+  uri: MONGODB_URI
 });
 
 // Inizialize csrf protection

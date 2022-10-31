@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_USER": "Domenico_Capalbo",
+        "MONGO_PASSWORD": "N5lSTFp2yRGRZgwm",
+        "MONGO_DEFAULT_DATABASE": "Fabrique-DB"
+    }
+}
