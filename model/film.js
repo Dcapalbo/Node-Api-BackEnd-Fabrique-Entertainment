@@ -18,11 +18,11 @@ const filmSchema = new Schema({
   description: {
     type: String,
     required: true
-  },
-  imageUrl: {
-    type: String,
-    required: true
-  },
+  }
+  // imageUrl: {
+  //   type: String,
+  //   required: true
+  // },
 //   userId: {
 //      // grabbing the id using mongoose
 //     type: Schema.Types.ObjectId,

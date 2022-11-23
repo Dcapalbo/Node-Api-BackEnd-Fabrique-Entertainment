@@ -5,12 +5,12 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session'); 
 const MongoDBStore = require('connect-mongodb-session')(session); 
-const csrf = require('csurf');
 const flash = require('connect-flash'); 
 const multer = require('multer');
 const helmet = require('helmet'); 
 const compression = require('compression'); 
 const morgan = require('morgan'); 
+const cors = require('cors');
 
 // Take the mongodb Uri 
 const MONGODB_URI =
@@ -23,10 +23,6 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
-
-// Inizialize csrf protection
-const csrfProtection = csrf();
-
 // Building file Storage for images 
 // diskStorage implementation
 const fileStorage = multer.diskStorage({
@@ -58,8 +54,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Importing the routes 
-
-
+const filmRoutes = require('./routes/films');
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, 'access.log'),
   {
@@ -75,6 +70,8 @@ app.use(morgan('combined', {
   stream: accessLogStream
 })); 
 
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 app.use(bodyParser.urlencoded({ extended: false }));
 // Inizialize multer 
 app.use(
@@ -92,12 +89,12 @@ app.use(
   })
 );
 
-// Inizialize csrf and flash 
-app.use(csrfProtection);
+
 app.use(flash());
 
+app.use(cors());
 // Inizialise the routes 
-
+app.use(filmRoutes);
 // Inizialise the server 
 mongoose
   .connect(MONGODB_URI)
@@ -106,6 +103,5 @@ mongoose
     app.listen(process.env.PORT || 5000);
   })
   .catch(err => {
-    console.log("connection error",)
-    console.log(err);
+    console.log("connection error", err.name);
   });
