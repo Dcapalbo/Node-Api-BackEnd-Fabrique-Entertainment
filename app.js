@@ -71,15 +71,16 @@ app.use(morgan('combined', {
 })); 
 
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 // Inizialize multer 
 app.use(
   // returning the storage and the filefilter 
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('file')
 );
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.use(
   session({
     secret: 'my secret',
@@ -89,10 +90,9 @@ app.use(
   })
 );
 
-
 app.use(flash());
-
 app.use(cors());
+
 // Inizialise the routes 
 app.use(filmRoutes);
 // Inizialise the server 
