@@ -23,21 +23,21 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
-// Building file Storage for images 
+// Building file Storage for images using multer
 // diskStorage implementation
 const fileStorage = multer.diskStorage({
-  // destination 
+  // destination method
   destination: (req, file, cb) => {
-    // callback, first argument the error the second is the destinations 
+    // callback, the first argument it is the error the second one it is the folder destination
     cb(null, 'images');
   },
-  // filename 
+  // filename method
   filename: (req, file, cb) => {
-    // callback, first argument the error the second is the filename
+    // callback, the first argument it is the error the second one it is the filename
     cb(null, new Date().toISOString() + '-' + file.originalname);
   }
 });
-// make the filter variable 
+// make the filter media variable
 const fileFilter = (req, file, cb) => {
   // if the format are this kind 
   if (

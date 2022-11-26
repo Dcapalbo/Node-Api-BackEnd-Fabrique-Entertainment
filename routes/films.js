@@ -3,6 +3,9 @@ const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
 
+
+//films => GET
+router.get('/get-films', filmsController.getFilms);
 //add-film => POST
 router.post(
   '/add-film',

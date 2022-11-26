@@ -1,8 +1,17 @@
-const mongoose = require('mongoose');
 const Film = require('../model/film');
 const { validationResult } = require('express-validator');
-const { Console } = require('console');
 
+
+// GET => Getting all films
+exports.getFilms = (req, res) => {
+  Film.find()
+    .then(films => {
+      // response from the server with the render method and passing an object
+      res.send(films);
+    })
+    // catching errors
+    .catch(err => console.log(err));
+};
 // POST => Adding a Film
 exports.postAddFilm = (req, res) => {
   // req.body it is a request which fly to the name of the views input and take the informations from there (look inside the view edit-product)
