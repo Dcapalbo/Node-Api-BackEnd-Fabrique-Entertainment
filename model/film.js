@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // creating the Mongoose db Schema
 const Schema = mongoose.Schema;
-// products Schema 
+// products Schema
 const filmSchema = new Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   duration: {
     type: Number,
@@ -17,20 +17,20 @@ const filmSchema = new Schema({
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   imageUrl: {
-    type: String,
-    required: true
-  }
-//   userId: {
-//      // grabbing the id using mongoose
-//     type: Schema.Types.ObjectId,
-//     // junction with ref, the Product and the User
-//     ref: 'User',
-//     required: true
-//   }
+    data: Buffer,
+    contentType: String,
+  },
+  //   userId: {
+  //      // grabbing the id using mongoose
+  //     type: Schema.Types.ObjectId,
+  //     // junction with ref, the Product and the User
+  //     ref: 'User',
+  //     required: true
+  //   }
 });
 
 // / exporting the model and the Schema
-module.exports = mongoose.model('Film', filmSchema);
+module.exports = mongoose.model("Film", filmSchema);
