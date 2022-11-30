@@ -90,52 +90,68 @@ exports.postAddFilm = (req, res) => {
 };
 
 // POST => Editing a product
-exports.postEditProduct = (req, res, next) => {
-  const filmId = req.body.filmId;
+exports.postEditFilm = (req, res, next) => {
   const updatedTitle = req.body.title;
   const updatedDuration = req.body.duration;
   const updatedDirector = req.body.director;
   const updatedDescription = req.body.description;
-  // const updatedImageUrl = req.body.imageUrl;
+  const updatedYear = req.body.year;
+  const updatedType = req.body.type;
+  const updatedImageUrl = req.body.imageUrl;
+  const filmId = req.body._id;
+
+  console.log("sono dentro l'API dopo il body: ", req.body);
   const errors = validationResult(req);
   // if there are errors
   if (!errors.isEmpty()) {
     console.log("Updating film errors: ", errors.array());
-    return res.status(422).send("admin/edit-product", {
-      film: {
-        title: updatedTitle,
-        // imageUrl: updatedImageUrl,
-        duration: updatedDuration,
-        director: updatedDirector,
-        description: updatedDescription,
-        _id: filmId,
-      },
-      // take the first error message from the array
-      errorMessage: errors.array()[0].msg,
-      validationErrors: errors.array(),
-    });
+    return (
+      res.status(422),
+      {
+        film: {
+          title: updatedTitle,
+          duration: updatedDuration,
+          director: updatedDirector,
+          description: updatedDescription,
+          year: updatedYear,
+          type: updatedType,
+          imageUrl: updatedImageUrl,
+          _id: filmId,
+        },
+        // take the first error message from the array
+        errorMessage: errors.array()[0].msg,
+        validationErrors: errors.array(),
+      }
+    );
   }
   // Mongoose method to find by id which has been passed
-  Product.findById(filmId)
+  Film.findById(filmId)
     // Promise then product with a condition
     .then((film) => {
+      console.log("siamo dentro al then: ", film);
       // make the id a String, response (db) and request (user)
-      if (film.userId.toString() !== req.user._id.toString()) {
+      if (film._id.toString() !== req._id.toString()) {
         // if they are not the same return the function must add some html
+        console.log("sono prima del return");
         return;
       }
-      // updating the product (db) value and save it
+      console.log("sono fuori dall'if");
+      // updating the film inside the (db)
       film.title = updatedTitle;
       film.duration = updatedDuration;
       film.director = updatedDirector;
       film.description = updatedDescription;
-      // film.imageUrl = updatedImageUrl;
+      film.year = updatedYear;
+      film.type = updatedType;
+      film.imageUrl = updatedImageUrl;
+
       return film.save().then((result) => {
-        console.log("Film got updated!");
+        console.log("Film got updated!: ", result.body);
       });
     })
     .catch((err) => {
-      console.log(err.name);
+      console.log("sono nel catch");
+      console.log("error: ", err);
     });
 };
 
