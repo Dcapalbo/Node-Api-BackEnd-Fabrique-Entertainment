@@ -20,6 +20,8 @@ exports.postAddFilm = (req, res) => {
   const duration = req.body.duration;
   const director = req.body.director;
   const description = req.body.description;
+  const year = req.body.year;
+  const type = req.body.type;
   const image = req.file;
   // if there is no image
   if (!image) {
@@ -32,6 +34,8 @@ exports.postAddFilm = (req, res) => {
           duration,
           director,
           description,
+          year,
+          type,
         },
         errorMessage: "Attached file is not an image.",
         validationErrors: [],
@@ -53,6 +57,8 @@ exports.postAddFilm = (req, res) => {
         duration,
         director,
         description,
+        year,
+        type,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
@@ -64,6 +70,8 @@ exports.postAddFilm = (req, res) => {
     duration,
     director,
     description,
+    year,
+    type,
     imageUrl: {
       data: fs.readFileSync("images/" + req.file.filename),
       contentType: "image/png",

@@ -19,6 +19,14 @@ const filmSchema = new Schema({
     type: String,
     required: true,
   },
+  year: {
+    type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
   imageUrl: {
     data: Buffer,
     contentType: String,
