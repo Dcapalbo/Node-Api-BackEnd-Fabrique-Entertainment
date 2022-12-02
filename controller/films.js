@@ -100,11 +100,9 @@ exports.postEditFilm = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const filmId = req.body._id;
 
-  console.log("sono dentro l'API dopo il body: ", req.body);
   const errors = validationResult(req);
   // if there are errors
   if (!errors.isEmpty()) {
-    console.log("Updating film errors: ", errors.array());
     return (
       res.status(422),
       {
@@ -128,14 +126,12 @@ exports.postEditFilm = (req, res, next) => {
   Film.findById(filmId)
     // Promise then product with a condition
     .then((film) => {
-      console.log("siamo dentro al then: ", film);
+      let filmDbId = film._id.toString();
       // make the id a String, response (db) and request (user)
-      if (film._id.toString() !== req._id.toString()) {
+      if (filmDbId !== filmId) {
         // if they are not the same return the function must add some html
-        console.log("sono prima del return");
         return;
       }
-      console.log("sono fuori dall'if");
       // updating the film inside the (db)
       film.title = updatedTitle;
       film.duration = updatedDuration;
@@ -145,12 +141,13 @@ exports.postEditFilm = (req, res, next) => {
       film.type = updatedType;
       film.imageUrl = updatedImageUrl;
 
-      return film.save().then((result) => {
-        console.log("Film got updated!: ", result.body);
+      film.save().then((result) => {
+        res.status(201).send(result);
+        console.log("Film has been updated");
+        return;
       });
     })
     .catch((err) => {
-      console.log("sono nel catch");
       console.log("error: ", err);
     });
 };
