@@ -8,7 +8,6 @@ exports.getFilms = (req, res) => {
     .then((films) => {
       // response from the server with the render method and passing an object
       res.send(films);
-      console.log("here my films", films);
     })
     // catching errors
     .catch((err) => console.log(err));
@@ -97,8 +96,8 @@ exports.postEditFilm = (req, res, next) => {
   const updatedDescription = req.body.description;
   const updatedYear = req.body.year;
   const updatedType = req.body.type;
-  const updatedImageUrl = req.body.imageUrl;
   const filmId = req.body._id;
+  const image = req.file;
 
   const errors = validationResult(req);
   // if there are errors
@@ -113,7 +112,6 @@ exports.postEditFilm = (req, res, next) => {
           description: updatedDescription,
           year: updatedYear,
           type: updatedType,
-          imageUrl: updatedImageUrl,
           _id: filmId,
         },
         // take the first error message from the array
@@ -133,13 +131,18 @@ exports.postEditFilm = (req, res, next) => {
         return;
       }
       // updating the film inside the (db)
+      const imageUrl = {
+        data: fs.readFileSync("images/" + image.filename),
+        contentType: "image/png",
+      };
+
       film.title = updatedTitle;
       film.duration = updatedDuration;
       film.director = updatedDirector;
       film.description = updatedDescription;
       film.year = updatedYear;
       film.type = updatedType;
-      film.imageUrl = updatedImageUrl;
+      film.imageUrl = imageUrl;
 
       film.save().then((result) => {
         res.status(201).send(result);
