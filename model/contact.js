@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 // creating the Mongoose db Schema
 const Schema = mongoose.Schema;
-// products Schema
+// contacts Schema
 const contactSchema = new Schema({
   name: {
     type: String,
@@ -23,7 +23,7 @@ const contactSchema = new Schema({
     type: String,
     required: true,
   },
-  phonenumber: {
+  phoneNumber: {
     type: Number,
     required: true,
   },

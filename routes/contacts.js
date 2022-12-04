@@ -11,14 +11,14 @@ router.post(
   [
     check("name").isString().isLength({ min: 3, max: 15 }).trim(),
     check("surname").isString().isLength({ min: 3, max: 20 }).trim(),
-    check("role").isString().isLength({ min: 3, max: 30 }).trim(),
-    check("bio").isString().isLength({ min: 50, max: 300 }).trim(),
+    check("role").isString().isLength({ min: 5, max: 30 }).trim(),
+    check("bio").isString().isLength({ min: 10, max: 300 }).trim(),
     check("email")
       .isEmail()
       .normalizeEmail()
-      .isLength({ min: 15, max: 40 })
+      .isLength({ min: 10, max: 40 })
       .trim(),
-    check("phoneNumber").isNumeric().isLength({ min: 10, max: 10 }),
+    check("phoneNumber").isFloat().isLength({ min: 10, max: 10 }),
   ],
   contactsController.postAddContact
 );
@@ -28,14 +28,14 @@ router.post(
   [
     check("name").isString().isLength({ min: 3, max: 15 }).trim(),
     check("surname").isString().isLength({ min: 1, max: 20 }).trim(),
-    check("role").isString().isLength({ min: 3, max: 30 }).trim(),
-    check("bio").isString().isLength({ min: 50, max: 300 }).trim(),
+    check("role").isString().isLength({ min: 5, max: 30 }).trim(),
+    check("bio").isString().isLength({ min: 10, max: 300 }).trim(),
     check("email")
       .isEmail()
       .normalizeEmail()
-      .isLength({ min: 15, max: 40 })
+      .isLength({ min: 10, max: 40 })
       .trim(),
-    check("phoneNumber").isNumeric().isLength({ min: 10, max: 10 }),
+    check("phoneNumber").isFloat().isLength({ min: 10, max: 10 }),
   ],
   contactsController.postEditContact
 );
