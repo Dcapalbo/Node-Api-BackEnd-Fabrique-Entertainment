@@ -1,6 +1,7 @@
 const fs = require("fs");
 const Film = require("../model/film");
 const { validationResult } = require("express-validator");
+const fileHelper = require("../util/file");
 
 // GET => Getting all films
 exports.getFilms = (req, res) => {
@@ -10,7 +11,10 @@ exports.getFilms = (req, res) => {
       res.send(films);
     })
     // catching errors
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(500).send(err);
+      console.log("error: ", err);
+    });
 };
 // POST => Adding a Film
 exports.postAddFilm = (req, res) => {
@@ -72,20 +76,26 @@ exports.postAddFilm = (req, res) => {
     year,
     type,
     imageUrl: {
-      data: fs.readFileSync("images/" + req.file.filename),
+      data: fs.readFileSync("images/" + image.filename),
       contentType: "image/png",
     },
   });
   // saving the data inside the db
-  film.save((error) => {
-    if (error) {
-      console.log("something went wrong, here the error: ", error.name);
-      res.status(400).send("error");
-    } else {
+  film
+    .save()
+    .then((films) => {
+      // response from the server with the render method and passing an object
       console.log("Film has been created");
-      res.status(201).send("Film has been created");
-    }
-  });
+      res.status(201).send(films);
+    })
+    // catching errors
+    .catch((err) => {
+      console.log("something went wrong, here the error: ", err);
+      res.status(500).send(err);
+    })
+    .finally(() => {
+      fileHelper.deleteFile("images/" + image.filename);
+    });
 };
 
 // POST => Editing a product
@@ -127,7 +137,7 @@ exports.postEditFilm = (req, res, next) => {
       let filmDbId = film._id.toString();
       // make the id a String, response (db) and request (user)
       if (filmDbId !== filmId) {
-        // if they are not the same return the function must add some html
+        res.status(500).send("Was not possible to update the specific film.");
         return;
       }
       // updating the film inside the (db)
@@ -151,34 +161,40 @@ exports.postEditFilm = (req, res, next) => {
       });
     })
     .catch((err) => {
+      res.status(500).send(err);
       console.log("error: ", err);
     });
 };
 
 // // POST => Delete a single product using the prod id and user id
-// exports.postDeleteProduct = (req, res, next) => {
-//     // req.body it is a request which fly to the name of the views input and take the informations from there (look inside the view products)
-//   const prodId = req.body.productId;
-//   Product.findById(prodId)
-//     .then(product => {
-//       if (!product) {
-//         return next(new Error('Product not found.'));
-//       }
-//       // deleting the file from the image picher path
-//       fileHelper.deleteFile(product.imageUrl);
-//         // Mongoose deleteOne method looking for the product id of a specific user which is request to the server (req.user._i)
-//       return Product.deleteOne({ _id: prodId, userId: req.user._id });
-//     })
-//     // returns a promise
-//     .then(() => {
-//       console.log('DESTROYED PRODUCT');
-//       // then redirect the suer
-//       res.redirect('/admin/products');
-//     })
-//     // catching the errors
-//     .catch(err => {
-//       const error = new Error(err);
-//       error.httpStatusCode = 500;
-//       return next(error);
-//     });
-// };
+exports.postDeleteFilm = (req, res, next) => {
+  const filmId = req.body._id;
+  // req.body it is a request which fly to the name of the views input and take the informations about the specific film
+  Film.findById(filmId)
+    .then((film) => {
+      let filmDbId = film._id.toString();
+      if (!film) {
+        res.status(500).send(new Error("Film not found."));
+        return;
+      } else if (filmDbId !== filmId) {
+        res
+          .status(500)
+          .send(
+            "Was not possible to delete the specific film, because the id passed from the client it's different from the one inside the DB."
+          );
+        return;
+      }
+      // Mongoose deleteOne method looking for the film id of a specific user which has been requested from the client to the server
+      return film.deleteOne({ _id: filmId });
+    })
+    // returns a promise
+    .then((result) => {
+      res.status(200).send(result);
+      console.log("The film has been deleted");
+    })
+    // catching the errors
+    .catch((err) => {
+      res.status(500).send(err);
+      console.log("error: ", err);
+    });
+};

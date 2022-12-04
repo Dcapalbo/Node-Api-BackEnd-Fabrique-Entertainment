@@ -1,10 +1,11 @@
 const path = require("path");
-const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const filmRoutes = require("./routes/films");
+const contactRoutes = require("./routes/contacts");
 const flash = require("connect-flash");
 const multer = require("multer");
 const cors = require("cors");
@@ -19,12 +20,12 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions",
 });
-// Building file Storage for images using multer
+// Building file Storage for the images folder by using multer
 // diskStorage implementation
 const storage = multer.diskStorage({
   // destination method
   destination: (req, file, cb) => {
-    // callback, the first argument it is the error the second one it is the folder destination
+    // callback, the first argument it is the potential error the second one it is the folder destination
     cb(null, "images");
   },
   // filename method
@@ -49,16 +50,12 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// returning the storage and the filefilter
-app.use(multer({ storage, fileFilter }).single("file"));
-
-// Importing the routes
-const filmRoutes = require("./routes/films");
-
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: false }));
+
 // Inizialize multer
+app.use(multer({ storage, fileFilter }).single("file"));
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -75,7 +72,7 @@ app.use(flash());
 app.use(cors());
 
 // Inizialise the routes
-app.use(filmRoutes);
+app.use(filmRoutes, contactRoutes);
 // Inizialise the server
 mongoose
   .connect(MONGODB_URI)

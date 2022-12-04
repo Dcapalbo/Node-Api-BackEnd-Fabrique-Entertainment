@@ -32,4 +32,6 @@ router.post(
   filmsController.postEditFilm
 );
 
+router.post("/delete-film", filmsController.postDeleteFilm);
+
 module.exports = router;
