@@ -17,7 +17,7 @@ exports.postAddUser = (req, res) => {
     // then return the status and the route
     return {
       //   hasError: true,
-      film: {
+      user: {
         name,
         email,
         password,
@@ -47,28 +47,21 @@ exports.postAddUser = (req, res) => {
     });
 };
 // POST => Login in the User
-exports.postLoginUser = (req, res) => {
+exports.postLoginUser = async (req, res) => {
   // req.body it is a request which fly to the name of the views input and take the informations from there (look inside the view edit-product)
-  const name = req.body.name;
-  const email = req.body.email;
-  const password = req.body.password;
+  const user = await User.findOne({
+    email: req.body.email,
+    password: req.body.password,
+  });
 
-  const errors = validationResult(req);
-
-  // if there are errors
-  if (!errors.isEmpty()) {
-    console.log("POST adding users errors: ", errors.array());
-    res.status(422).send("input users it's invalid");
-    // then return the status and the route
-    return {
-      //   hasError: true,
-      film: {
-        name,
-        email,
-        password,
-      },
-      errorMessage: errors.array()[0].msg,
-      validationErrors: errors.array(),
-    };
+  if (user) {
+    console.log("Here my User data: ", user);
+    return res.json({ status: "ok", user: "User found" });
+  } else {
+    console.log("Here my User error: ", user);
+    return res.json({
+      status: "ko",
+      user: "User not found",
+    });
   }
 };
