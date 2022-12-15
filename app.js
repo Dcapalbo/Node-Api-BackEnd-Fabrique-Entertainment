@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const filmRoutes = require("./routes/films");
 const contactRoutes = require("./routes/contacts");
+const usersRoutes = require("./routes/users");
 const flash = require("connect-flash");
 const multer = require("multer");
 const cors = require("cors");
@@ -72,7 +73,7 @@ app.use(flash());
 app.use(cors());
 
 // Inizialise the routes
-app.use(filmRoutes, contactRoutes);
+app.use(filmRoutes, contactRoutes, usersRoutes);
 // Inizialise the server
 mongoose
   .connect(MONGODB_URI)
