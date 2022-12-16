@@ -1,12 +1,13 @@
-const User = require("../model/user");
 const { validationResult } = require("express-validator");
+const User = require("../model/user");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 // POST => Adding a User
-exports.postAddUser = (req, res) => {
-  // req.body it is a request which fly to the name of the views input and take the informations from there (look inside the view edit-product)
+exports.postAddUser = async (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
-  const password = req.body.password;
+  const password = await bcrypt.hash(req.body.password, 10);
 
   const errors = validationResult(req);
 
@@ -48,20 +49,31 @@ exports.postAddUser = (req, res) => {
 };
 // POST => Login in the User
 exports.postLoginUser = async (req, res) => {
-  // req.body it is a request which fly to the name of the views input and take the informations from there (look inside the view edit-product)
   const user = await User.findOne({
     email: req.body.email,
-    password: req.body.password,
   });
 
-  if (user) {
-    console.log("Here my User data: ", user);
-    return res.json({ status: "ok", user: "User found" });
+  const isPasswordValid = await bcrypt.compare(
+    req.body.password,
+    user.password
+  );
+
+  if (user && isPasswordValid) {
+    const token = jwt.sign(
+      {
+        name: user.name,
+        email: user.email,
+      },
+      "secret1992_25_03"
+    );
+
+    console.log("Here my login token: ", token);
+    return res.json({ status: "ok", token });
   } else {
-    console.log("Here my User error: ", user);
+    console.log("Here my User error: ", token);
     return res.json({
       status: "ko",
-      user: "User not found",
+      user: token,
     });
   }
 };
