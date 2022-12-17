@@ -65,7 +65,7 @@ exports.postLoginUser = async (req, res) => {
         email: user.email,
       },
       "secret1992_25_03",
-      { expiresIn: "6h" }
+      { expiresIn: "1m" }
     );
     return res.json({ status: "ok", token });
   } else {
