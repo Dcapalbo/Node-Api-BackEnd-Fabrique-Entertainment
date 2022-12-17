@@ -64,13 +64,11 @@ exports.postLoginUser = async (req, res) => {
         name: user.name,
         email: user.email,
       },
-      "secret1992_25_03"
+      "secret1992_25_03",
+      { expiresIn: "6h" }
     );
-
-    console.log("Here my login token: ", token);
     return res.json({ status: "ok", token });
   } else {
-    console.log("Here my User error: ", token);
     return res.json({
       status: "ko",
       user: token,
