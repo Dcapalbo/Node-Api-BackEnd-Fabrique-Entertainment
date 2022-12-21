@@ -1,2 +1,2 @@
-# fabrique-entertainment-back-end
-Back end DB with Mongo for fabrique entertainment data
+# BE-REST-fabrique-entertainment
+Back end Rest api, using node.js, express.js and mongoDB
