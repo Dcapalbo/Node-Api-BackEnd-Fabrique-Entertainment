@@ -31,13 +31,13 @@ const filmSchema = new Schema({
     data: Buffer,
     contentType: String,
   },
-  //   userId: {
-  //      // grabbing the id using mongoose
-  //     type: Schema.Types.ObjectId,
-  //     // junction with ref, the Product and the User
-  //     ref: 'User',
-  //     required: true
-  //   }
+  userId: {
+    // grabbing the id using mongoose
+    type: Schema.Types.ObjectId,
+    // junction with ref, the Film and the User
+    ref: "User",
+    required: true,
+  },
 });
 
 // / exporting the model and the Schema

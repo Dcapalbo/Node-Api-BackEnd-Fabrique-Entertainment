@@ -15,7 +15,16 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  films: [
+    {
+      filmId: {
+        type: Schema.Types.ObjectId,
+        ref: "Film",
+        required: true,
+      },
+    },
+  ],
 });
 
 // / exporting the model and the Schema
-module.exports = mongoose.model("user", userSchema);
+module.exports = mongoose.model("User", userSchema);

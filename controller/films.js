@@ -1,13 +1,16 @@
 const fs = require("fs");
 const Film = require("../model/film");
+const User = require("../model/user");
 const { validationResult } = require("express-validator");
 const fileHelper = require("../util/file");
 
 // GET => Getting all films
 exports.getFilms = (req, res) => {
-  Film.find()
+  User.find()
+    .populate("films")
     .then((films) => {
       // response from the server with the render method and passing an object
+      console.log("here my films:", films);
       res.send(films);
     })
     // catching errors
@@ -26,6 +29,9 @@ exports.postAddFilm = (req, res) => {
   const year = req.body.year;
   const type = req.body.type;
   const image = req.file;
+  const userId = req.body.userId;
+
+  console.log(req.body);
   // if there is no image
   if (!image) {
     // then return the status and the route
@@ -39,6 +45,7 @@ exports.postAddFilm = (req, res) => {
           description,
           year,
           type,
+          userId,
         },
         errorMessage: "Attached file is not an image.",
         validationErrors: [],
@@ -62,6 +69,7 @@ exports.postAddFilm = (req, res) => {
         description,
         year,
         type,
+        userId,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
@@ -79,6 +87,7 @@ exports.postAddFilm = (req, res) => {
       data: fs.readFileSync("images/" + image.filename),
       contentType: "image/png",
     },
+    userId,
   });
   // saving the data inside the db
   film
