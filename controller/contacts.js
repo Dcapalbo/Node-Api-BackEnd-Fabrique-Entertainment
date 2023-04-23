@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const Contact = require("../model/contact");
-const fileHelper = require("../util/file");
+const { deleteFile } = require("../util/fs");
 const fs = require("fs");
 
 // GET => Getting all contacts
@@ -65,7 +65,7 @@ exports.addContact = async (req, res) => {
         contentType: "image/png",
       },
     });
-    fileHelper.deleteFile("images/" + image.filename);
+    deleteFile("images/" + image.filename);
     return res.status(201).send(contact);
   } catch (error) {
     return res.status(500).json({ message: "Something went wrong.", error });
@@ -124,7 +124,7 @@ exports.editContact = async (req, res) => {
     const updatedContact = await Contact.findByIdAndUpdate(_id, update, {
       new: true,
     });
-    fileHelper.deleteFile("images/" + image.filename);
+    deleteFile("images/" + image.filename);
     res.status(200).json(updatedContact);
   } catch (error) {
     res

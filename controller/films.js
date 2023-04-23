@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const fileHelper = require("../util/file");
+const { deleteFile } = require("../util/fs");
 const Film = require("../model/film");
 const fs = require("fs");
 
@@ -78,7 +78,7 @@ exports.addFilm = async (req, res) => {
       },
     });
 
-    fileHelper.deleteFile("images/" + image.filename);
+    deleteFile("images/" + image.filename);
     return res.status(201).send(film);
   } catch (error) {
     return res.status(500).json({ message: "Something went wrong." });
@@ -156,7 +156,7 @@ exports.editFilm = async (req, res) => {
     const updatedFilm = await Film.findByIdAndUpdate(_id, update, {
       new: true,
     });
-    fileHelper.deleteFile("images/" + image.filename);
+    deleteFile("images/" + image.filename);
     res.status(200).json(updatedFilm);
   } catch (error) {
     res
