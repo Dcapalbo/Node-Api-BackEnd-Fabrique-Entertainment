@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 const User = require("../model/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { log } = require("console");
 
 // POST => create User
 exports.createUser = async (req, res) => {

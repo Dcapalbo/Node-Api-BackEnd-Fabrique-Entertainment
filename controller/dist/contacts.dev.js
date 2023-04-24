@@ -3,10 +3,10 @@
 var _require = require("express-validator"),
     validationResult = _require.validationResult;
 
-var Contact = require("../model/contact");
-
-var _require2 = require("../util/fs"),
+var _require2 = require("../util/functions"),
     deleteFile = _require2.deleteFile;
+
+var Contact = require("../model/contact");
 
 var fs = require("fs"); // GET => Getting all contacts
 

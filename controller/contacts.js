@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
+const { deleteFile } = require("../util/functions");
 const Contact = require("../model/contact");
-const { deleteFile } = require("../util/fs");
 const fs = require("fs");
 
 // GET => Getting all contacts

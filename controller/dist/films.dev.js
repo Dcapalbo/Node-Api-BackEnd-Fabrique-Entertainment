@@ -3,7 +3,7 @@
 var _require = require("express-validator"),
     validationResult = _require.validationResult;
 
-var _require2 = require("../util/fs"),
+var _require2 = require("../util/functions"),
     deleteFile = _require2.deleteFile;
 
 var Film = require("../model/film");

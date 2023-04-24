@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { deleteFile } = require("../util/fs");
+const { deleteFile } = require("../util/functions");
 const Film = require("../model/film");
 const fs = require("fs");
 

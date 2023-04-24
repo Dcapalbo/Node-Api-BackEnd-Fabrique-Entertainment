@@ -9,10 +9,7 @@ var User = require("../model/user");
 
 var jwt = require("jsonwebtoken");
 
-var bcrypt = require("bcryptjs");
-
-var _require2 = require("console"),
-    log = _require2.log; // POST => create User
+var bcrypt = require("bcryptjs"); // POST => create User
 
 
 exports.createUser = function _callee(req, res) {
