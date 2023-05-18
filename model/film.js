@@ -1,4 +1,3 @@
-const genreSchema = require("./genre");
 const mongoose = require("mongoose");
 // creating the Mongoose db Schema
 const Schema = mongoose.Schema;

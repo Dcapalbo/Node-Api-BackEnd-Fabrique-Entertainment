@@ -18,9 +18,10 @@ exports.getFilms = async (req, res) => {
 exports.addFilm = async (req, res) => {
   const {
     title,
-    director,
-    production,
-    screenwriter,
+    directors,
+    genres,
+    productions,
+    screenwriters,
     directorOfPhotography,
     synopsis,
     duration,
@@ -37,9 +38,10 @@ exports.addFilm = async (req, res) => {
     res.status(422).json({
       film: {
         title,
-        director,
-        production,
-        screenwriter,
+        directors,
+        genres,
+        productions,
+        screenwriters,
         directorOfPhotography,
         synopsis,
         duration,
@@ -62,9 +64,10 @@ exports.addFilm = async (req, res) => {
 
     const film = await Film.create({
       title,
-      director,
-      production,
-      screenwriter,
+      directors,
+      genres,
+      productions,
+      screenwriters,
       directorOfPhotography,
       synopsis,
       duration,
@@ -88,9 +91,10 @@ exports.addFilm = async (req, res) => {
 exports.editFilm = async (req, res) => {
   const {
     title,
-    director,
-    production,
-    screenwriter,
+    directors,
+    genres,
+    productions,
+    screenwriters,
     directorOfPhotography,
     synopsis,
     duration,
@@ -115,9 +119,10 @@ exports.editFilm = async (req, res) => {
 
   const update = {
     title,
-    director,
-    production,
-    screenwriter,
+    directors,
+    genres,
+    productions,
+    screenwriters,
     directorOfPhotography,
     synopsis,
     duration,
@@ -136,9 +141,10 @@ exports.editFilm = async (req, res) => {
     res.status(422).json({
       film: {
         title,
-        director,
-        production,
-        screenwriter,
+        directors,
+        genres,
+        productions,
+        screenwriters,
         directorOfPhotography,
         synopsis,
         duration,
