@@ -12,6 +12,14 @@ const filmSchema = new Schema({
     type: String,
     required: true,
   },
+  genres: [
+    {
+      genreName: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   productions: [
     {
       productionName: {
@@ -36,14 +44,6 @@ const filmSchema = new Schema({
     type: String,
     required: true,
   },
-  genres: [
-    {
-      genreName: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
   duration: {
     type: Number,
     required: true,
