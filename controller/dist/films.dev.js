@@ -46,13 +46,13 @@ exports.getFilms = function _callee(req, res) {
 
 
 exports.addFilm = function _callee2(req, res) {
-  var _req$body, title, director, production, screenwriter, directorOfPhotography, synopsis, duration, year, slug, type, file, image, errors, existingFilm, film;
+  var _req$body, title, director, production, screenwriter, directorOfPhotography, synopsis, duration, year, slug, type, image, errors, existingFilm, film;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          _req$body = req.body, title = _req$body.title, director = _req$body.director, production = _req$body.production, screenwriter = _req$body.screenwriter, directorOfPhotography = _req$body.directorOfPhotography, synopsis = _req$body.synopsis, duration = _req$body.duration, year = _req$body.year, slug = _req$body.slug, type = _req$body.type, file = _req$body.file;
+          _req$body = req.body, title = _req$body.title, director = _req$body.director, production = _req$body.production, screenwriter = _req$body.screenwriter, directorOfPhotography = _req$body.directorOfPhotography, synopsis = _req$body.synopsis, duration = _req$body.duration, year = _req$body.year, slug = _req$body.slug, type = _req$body.type;
           image = req.file;
           errors = validationResult(req); // if there are errors
           // Send a response with the status and a json

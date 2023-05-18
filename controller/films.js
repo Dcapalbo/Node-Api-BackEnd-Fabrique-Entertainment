@@ -27,7 +27,6 @@ exports.addFilm = async (req, res) => {
     year,
     slug,
     type,
-    file,
   } = req.body;
   const image = req.file;
 

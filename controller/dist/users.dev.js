@@ -215,7 +215,7 @@ exports.forgotPassword = function _callee3(req, res) {
             from: process.env.SMTP_EMAIL,
             to: email,
             subject: "Fabrique entertainment link per il reset della password",
-            html: "\n            <h2>Questo link ha validit\xE0 di 5 minutiPer favore clicca sul link qui sotto per resettare la tua password,</h2>\n            <a href=\"".concat(process.env.CLIENT_LOCAL_URL, "/reset-password?token=").concat(token, "\">").concat(token, "</a>\n        ")
+            html: "<h2>Questo link ha validit\xE0 di 5 minutiPer favore clicca sul link qui sotto per resettare la tua password,</h2>\n            <a href=\"".concat(process.env.CLIENT_LOCAL_URL, "/reset-password?token=").concat(token, "\">").concat(token, "</a>\n        ")
           };
           _context3.next = 12;
           return regeneratorRuntime.awrap(User.updateOne({

@@ -1,3 +1,4 @@
+const genreSchema = require("./genre");
 const mongoose = require("mongoose");
 // creating the Mongoose db Schema
 const Schema = mongoose.Schema;
@@ -11,14 +12,22 @@ const filmSchema = new Schema({
     type: String,
     required: true,
   },
-  production: {
-    type: String,
-    required: true,
-  },
-  screenwriter: {
-    type: String,
-    required: true,
-  },
+  productions: [
+    {
+      productionName: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  screenwriters: [
+    {
+      screenwriterName: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   directorOfPhotography: {
     type: String,
     required: true,
@@ -27,6 +36,14 @@ const filmSchema = new Schema({
     type: String,
     required: true,
   },
+  genres: [
+    {
+      genreName: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   duration: {
     type: Number,
     required: true,

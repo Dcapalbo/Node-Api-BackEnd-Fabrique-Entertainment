@@ -9,11 +9,6 @@ const users = [
     email: "capalbodomenico@gmail.com",
     password: "Domenico03",
   },
-  {
-    name: "Tiziano",
-    email: "janedoe@example.com",
-    password: "TiziScott",
-  },
 ];
 
 // Define the seeder function

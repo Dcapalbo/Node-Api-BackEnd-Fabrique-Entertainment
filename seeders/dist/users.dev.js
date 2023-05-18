@@ -13,8 +13,8 @@ var users = [{
   password: "Domenico03"
 }, {
   name: "Tiziano",
-  email: "janedoe@example.com",
-  password: "TiziScott"
+  email: "tiziscott1@gmail.com",
+  password: "Domenico03"
 }]; // Define the seeder function
 
 var seedUsers = function seedUsers() {
