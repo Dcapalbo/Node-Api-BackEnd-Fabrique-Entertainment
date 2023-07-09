@@ -61,8 +61,6 @@ exports.createUser = async (req, res) => {
 // POST => Login in the User
 exports.loginUser = async (req, res) => {
 	const { email, password } = req.body;
-	console.log(req.body);
-
 	try {
 		const existingUser = await User.findOne({ email });
 
@@ -89,14 +87,15 @@ exports.loginUser = async (req, res) => {
 				userId: existingUser._id,
 			},
 			process.env.JWT_SECRET,
-			{ expiresIn: '6h' }
+			{ expiresIn: '1h' }
 		);
+		console.log(existingUser);
 
 		return res.status(200).json({
 			message: 'Login successful',
-			result: existingUser,
-			token,
 			userId: existingUser._id,
+			token,
+			name: existingUser.name,
 		});
 	} catch (error) {
 		console.error(error.message);
