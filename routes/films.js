@@ -86,6 +86,22 @@ router.post(
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
+		check('festivals').custom((festivals) => {
+			festivals.forEach((festival, index) => {
+				const { festivalName } = festival;
+				if (
+					festivalName.trim().length < 10 &&
+					festivalName.trim().length > 50
+				) {
+					throw new Error(
+						`Il nome del festival ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 50`
+					);
+				}
+			});
+			return true;
+		}),
 		check('type').isString().trim(),
 	],
 	addFilm
@@ -164,6 +180,22 @@ router.put(
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
+		check('festivals').custom((festivals) => {
+			festivals.forEach((festival, index) => {
+				const { festivalName } = festival;
+				if (
+					festivalName.trim().length < 10 &&
+					festivalName.trim().length > 50
+				) {
+					throw new Error(
+						`Il nome del festival ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 50`
+					);
+				}
+			});
+			return true;
+		}),
 		check('type').isString().trim(),
 	],
 	editFilm

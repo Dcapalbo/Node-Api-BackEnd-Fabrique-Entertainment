@@ -53,6 +53,13 @@ const filmSchema = new Schema({
 		type: Number,
 		required: true,
 	},
+	festivals: [
+		{
+			festivalName: {
+				type: String,
+			},
+		},
+	],
 	type: {
 		type: String,
 		required: true,
