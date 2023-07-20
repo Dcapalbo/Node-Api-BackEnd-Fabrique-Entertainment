@@ -31,6 +31,10 @@ exports.addFilm = async (req, res) => {
 		festivals,
 		slug,
 		type,
+		trailer,
+		imdb,
+		instagram,
+		facebook
 	} = req.body;
 
 	const image = req.file;
@@ -53,6 +57,10 @@ exports.addFilm = async (req, res) => {
 				festivals,
 				slug,
 				type,
+				trailer: trailer ?? null,
+				imdb: imdb ?? null,
+				instagram: instagram ?? null,
+				facebook: facebook ?? null,
 				userId,
 			},
 			message: 'Validation errors are present',
@@ -80,6 +88,10 @@ exports.addFilm = async (req, res) => {
 			festivals,
 			slug,
 			type,
+			trailer: trailer ?? null,
+			imdb: imdb ?? null,
+			instagram: instagram ?? null,
+			facebook: facebook ?? null,
 			imageUrl: {
 				data: fs.readFileSync('images/' + image.filename),
 				contentType: 'image/png',
@@ -108,6 +120,10 @@ exports.editFilm = async (req, res) => {
 		festivals,
 		slug,
 		type,
+		trailer,
+		imdb,
+		instagram,
+		facebook,
 		_id,
 	} = req.body;
 
@@ -137,6 +153,10 @@ exports.editFilm = async (req, res) => {
 		festivals,
 		slug,
 		type,
+		trailer: trailer ?? null,
+		imdb: imdb ?? null,
+		instagram: instagram ?? null,
+		facebook: facebook ?? null,
 		imageUrl,
 	};
 
@@ -160,6 +180,10 @@ exports.editFilm = async (req, res) => {
 				festivals,
 				slug,
 				type,
+				trailer: trailer ?? null,
+				imdb: imdb ?? null,
+				instagram: instagram ?? null,
+				facebook: facebook ?? null,
 			},
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,

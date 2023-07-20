@@ -64,6 +64,18 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	trailer: {
+		type: String,
+	},
+	imdb: {
+		type: String,
+	},
+	facebook: {
+		type: String,
+	},
+	instagram: {
+		type: String,
+	},
 	slug: {
 		type: String,
 		required: true,

@@ -87,22 +87,31 @@ router.post(
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
-			festivals.forEach((festival, index) => {
+			if (festivals) {
+			  festivals.forEach((festival, index) => {
 				const { festivalName } = festival;
-				if (
-					festivalName.trim().length < 10 &&
-					festivalName.trim().length > 50
-				) {
-					throw new Error(
-						`Il nome del festival ${
-							index + 1
-						} deve contenere almeno 10 caratteri e non più di 50`
-					);
+				if (festivalName.length < 10 || festivalName.length > 50) {
+				  throw new Error(
+					`Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
+				  );
 				}
-			});
+			  });
+			}
 			return true;
-		}),
+		  }),		  
 		check('type').isString().trim(),
+		check('trailer').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+      		.withMessage('Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('imdb').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+			.withMessage('Il link di imdb deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('instagram').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+			.withMessage('Il link di instagram deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('facebook').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+			.withMessage('Il link di facebook deve essere un URL valido con il protocollo HTTP o HTTPS'),
 	],
 	addFilm
 );
@@ -181,22 +190,31 @@ router.put(
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
-			festivals.forEach((festival, index) => {
+			if (festivals) {
+			  festivals.forEach((festival, index) => {
 				const { festivalName } = festival;
-				if (
-					festivalName.trim().length < 10 &&
-					festivalName.trim().length > 50
-				) {
-					throw new Error(
-						`Il nome del festival ${
-							index + 1
-						} deve contenere almeno 10 caratteri e non più di 50`
-					);
+				if (festivalName.length < 10 || festivalName.length > 50) {
+				  throw new Error(
+					`Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
+				  );
 				}
-			});
+			  });
+			}
 			return true;
-		}),
+		  }),		  
 		check('type').isString().trim(),
+		check('trailer').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+      		.withMessage('Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('imdb').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+			.withMessage('Il link di imdb deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('instagram').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+			.withMessage('Il link di instagram deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('facebook').optional()      
+			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
+			.withMessage('Il link di facebook deve essere un URL valido con il protocollo HTTP o HTTPS'),
 	],
 	editFilm
 );
