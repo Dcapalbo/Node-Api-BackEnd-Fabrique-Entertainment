@@ -62,23 +62,7 @@ router.post(
 				});
 				return true;
 			}),
-		check('genres')
-			.isArray({ min: 1 })
-			.withMessage(
-				"L'elenco dei generi deve essere di una lunghezza minima di una unità"
-			)
-			.custom((genres) => {
-				genres.forEach((genre, index) => {
-					const { genreName } = genre;
-
-					if (!genreName) {
-						throw new Error(
-							`Il nome del genere cinematografico ${index + 1} è obbligatorio`
-						);
-					}
-				});
-				return true;
-			}),
+		check('genre').isString().trim(),
 		check('directorOfPhotography')
 			.isString()
 			.isLength({ min: 6, max: 30 })
@@ -87,16 +71,18 @@ router.post(
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
-			if (festivals) {
-			  festivals.forEach((festival, index) => {
-				const { festivalName } = festival;
-				if (festivalName.length < 10 || festivalName.length > 50) {
-				  throw new Error(
-					`Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
-				  );
-				}
-			  });
+			if (!festivals || festivals.length === 0) {
+			  return true;
 			}
+
+			festivals.forEach((festival, index) => {
+			  const { festivalName } = festival;
+			  if (festivalName.length < 10 || festivalName.length > 50) {
+				throw new Error(
+				  `Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
+				);
+			  }
+			});  
 			return true;
 		  }),		  
 		check('type').isString().trim(),
@@ -165,23 +151,7 @@ router.put(
 				});
 				return true;
 			}),
-		check('genres')
-			.isArray({ min: 1 })
-			.withMessage(
-				"L'elenco dei generi deve essere di una lunghezza minima di una unità"
-			)
-			.custom((genres) => {
-				genres.forEach((genre, index) => {
-					const { genreName } = genre;
-
-					if (!genreName) {
-						throw new Error(
-							`Il nome del genere cinematografico ${index + 1} è obbligatorio`
-						);
-					}
-				});
-				return true;
-			}),
+		check('genre').isString().trim(),
 		check('directorOfPhotography')
 			.isString()
 			.isLength({ min: 6, max: 30 })
@@ -190,18 +160,20 @@ router.put(
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
-			if (festivals) {
-			  festivals.forEach((festival, index) => {
-				const { festivalName } = festival;
-				if (festivalName.length < 10 || festivalName.length > 50) {
-				  throw new Error(
-					`Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
-				  );
-				}
-			  });
+			if (!festivals || festivals.length === 0) {
+			  return true;
 			}
+			
+			festivals.forEach((festival, index) => {
+			  const { festivalName } = festival;
+			  if (festivalName.length < 10 || festivalName.length > 50) {
+				throw new Error(
+				  `Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
+				);
+			  }
+			});  
 			return true;
-		  }),		  
+		  }),			  
 		check('type').isString().trim(),
 		check('trailer').optional()      
 			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
