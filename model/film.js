@@ -93,7 +93,7 @@ const filmSchema = new Schema({
 	},
 	executiveProducers: [
 		{
-			executiveProducer: {
+			executiveProducerName: {
 				type: String,
 				required: true,
 			},

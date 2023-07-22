@@ -137,9 +137,7 @@ router.post(
 		check('lineProducer').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('executiveProducers')
 			.isArray({ min: 1 })
-			.withMessage(
-				"L'elenco delle produzioni deve contenere almeno una società di produzione"
-			)
+			.withMessage('Deve essere presente almeno 1 produttore esecutivo')
 			.custom((executiveProducers) => {
 				executiveProducers.forEach((executiveProducer, index) => {
 					const { executiveProducerName } = executiveProducer;
