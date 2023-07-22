@@ -29,6 +29,20 @@ const filmSchema = new Schema({
 			},
 		},
 	],
+	coProductions: [
+		{
+			coProductionName: {
+				type: String,
+			},
+		},
+	],
+	coProducers: [
+		{
+			coProducerName: {
+				type: String,
+			},
+		},
+	],
 	screenwriters: [
 		{
 			screenwriterName: {
@@ -77,9 +91,19 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	executiveProducer: {
+	executiveProducers: [
+		{
+			executiveProducer: {
+				type: String,
+				required: true,
+			},
+		},
+	],
+	distributor: {
 		type: String,
-		required: true,
+	},
+	salesAgent: {
+		type: String,
 	},
 	firstAssistantDirector: {
 		type: String,

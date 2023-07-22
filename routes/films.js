@@ -52,8 +52,7 @@ router.post(
 
 					if (
 						!producerName ||
-						(producerName.trim().length < 6 &&
-							producerName.trim().length > 40)
+						(producerName.trim().length < 6 && producerName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome della società di produzione ${
@@ -64,6 +63,44 @@ router.post(
 				});
 				return true;
 			}),
+		check('coProductions').custom((coProductions) => {
+			if (!coProductions || coProductions.length === 0) {
+				return true;
+			}
+
+			coProductions.forEach((coProduction, index) => {
+				const { coProductionName } = coProduction;
+
+				if (coProductionName.length < 10 || coProductionName.length > 40) {
+					throw new Error(
+						`Il nome della co-produzione ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
+		check('coProducers').custom((coProducers) => {
+			if (!coProducers || coProducers.length === 0) {
+				return true;
+			}
+
+			coProducers.forEach((coProducer, index) => {
+				const { coProducerName } = coProducer;
+
+				if (coProducerName.length < 10 || coProducerName.length > 40) {
+					throw new Error(
+						`Il nome del co-produttore ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
 		check('screenwriters')
 			.isArray({ min: 1 })
 			.withMessage("L'elenco degli sceneggiatori deve contenere almeno un nome")
@@ -90,42 +127,39 @@ router.post(
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
-		check('editing')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('scenography')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('costumes')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('music')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('sound')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('soundDesign')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('casting')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('lineProducer')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('executiveProducer')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
+		check('editing').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('scenography').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('costumes').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('music').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('sound').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('soundDesign').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('casting').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('lineProducer').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('executiveProducers')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco delle produzioni deve contenere almeno una società di produzione"
+			)
+			.custom((executiveProducers) => {
+				executiveProducers.forEach((executiveProducer, index) => {
+					const { executiveProducerName } = executiveProducer;
+
+					if (
+						!executiveProducerName ||
+						(executiveProducerName.trim().length < 6 &&
+							executiveProducerName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome del produttore esecutivo ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('distributor').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('salesAgent').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('firstAssistantDirector')
 			.isString()
 			.isLength({ min: 6, max: 40 })
@@ -136,32 +170,62 @@ router.post(
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
 			if (!festivals || festivals.length === 0) {
-			  return true;
+				return true;
 			}
 
 			festivals.forEach((festival, index) => {
-			  const { festivalName } = festival;
-			  if (festivalName.length < 10 || festivalName.length > 50) {
-				throw new Error(
-				  `Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
-				);
-			  }
-			});  
+				const { festivalName } = festival;
+				if (festivalName.length < 10 || festivalName.length > 50) {
+					throw new Error(
+						`Il nome del festival ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 50`
+					);
+				}
+			});
 			return true;
-		  }),		  
+		}),
 		check('type').isString().trim(),
-		check('trailer').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-      		.withMessage('Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'),
-		check('imdb').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-			.withMessage('Il link di imdb deve essere un URL valido con il protocollo HTTP o HTTPS'),
-		check('instagram').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-			.withMessage('Il link di instagram deve essere un URL valido con il protocollo HTTP o HTTPS'),
-		check('facebook').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-			.withMessage('Il link di facebook deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('trailer')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
+		check('imdb')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il link di imdb deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
+		check('instagram')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il link di instagram deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
+		check('facebook')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il link di facebook deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
 	],
 	addFilm
 );
@@ -170,7 +234,7 @@ router.put(
 	'/update-film',
 	[
 		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
-		check('director').isString().isLength({ min: 6, max: 30 }).trim(),
+		check('director').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('productions')
 			.isArray({ min: 1 })
 			.withMessage(
@@ -183,12 +247,12 @@ router.put(
 					if (
 						!productionName ||
 						(productionName.trim().length < 6 &&
-							productionName.trim().length > 50)
+							productionName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome della società di produzione ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 50`
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 				});
@@ -205,8 +269,7 @@ router.put(
 
 					if (
 						!producerName ||
-						(producerName.trim().length < 6 &&
-							producerName.trim().length > 40)
+						(producerName.trim().length < 6 && producerName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome della società di produzione ${
@@ -217,6 +280,44 @@ router.put(
 				});
 				return true;
 			}),
+		check('coProductions').custom((coProductions) => {
+			if (!coProductions || coProductions.length === 0) {
+				return true;
+			}
+
+			coProductions.forEach((coProduction, index) => {
+				const { coProductionName } = coProduction;
+
+				if (coProductionName.length < 10 || coProductionName.length > 40) {
+					throw new Error(
+						`Il nome della co-produzione ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
+		check('coProducers').custom((coProducers) => {
+			if (!coProducers || coProducers.length === 0) {
+				return true;
+			}
+
+			coProducers.forEach((coProducer, index) => {
+				const { coProducerName } = coProducer;
+
+				if (coProducerName.length < 10 || coProducerName.length > 40) {
+					throw new Error(
+						`Il nome del co-produttore ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
 		check('screenwriters')
 			.isArray({ min: 1 })
 			.withMessage("L'elenco degli sceneggiatori deve contenere almeno un nome")
@@ -243,42 +344,39 @@ router.put(
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
-		check('editing')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('scenography')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('costumes')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('music')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('sound')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('soundDesign')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('casting')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('lineProducer')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
-		check('executiveProducer')
-			.isString()
-			.isLength({ min: 6, max: 40 })
-			.trim(),
+		check('editing').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('scenography').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('costumes').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('music').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('sound').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('soundDesign').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('casting').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('lineProducer').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('executiveProducers')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco delle produzioni deve contenere almeno una società di produzione"
+			)
+			.custom((executiveProducers) => {
+				executiveProducers.forEach((executiveProducer, index) => {
+					const { executiveProducerName } = executiveProducer;
+
+					if (
+						!executiveProducerName ||
+						(executiveProducerName.trim().length < 6 &&
+							executiveProducerName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome del produttore esecutivo ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('distributor').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('salesAgent').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('firstAssistantDirector')
 			.isString()
 			.isLength({ min: 6, max: 40 })
@@ -289,32 +387,62 @@ router.put(
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
 			if (!festivals || festivals.length === 0) {
-			  return true;
+				return true;
 			}
-			
+
 			festivals.forEach((festival, index) => {
-			  const { festivalName } = festival;
-			  if (festivalName.length < 10 || festivalName.length > 50) {
-				throw new Error(
-				  `Il nome del festival ${index + 1} deve contenere almeno 10 caratteri e non più di 50`
-				);
-			  }
-			});  
+				const { festivalName } = festival;
+				if (festivalName.length < 10 || festivalName.length > 50) {
+					throw new Error(
+						`Il nome del festival ${
+							index + 1
+						} deve contenere almeno 10 caratteri e non più di 50`
+					);
+				}
+			});
 			return true;
-		  }),			  
+		}),
 		check('type').isString().trim(),
-		check('trailer').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-      		.withMessage('Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'),
-		check('imdb').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-			.withMessage('Il link di imdb deve essere un URL valido con il protocollo HTTP o HTTPS'),
-		check('instagram').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-			.withMessage('Il link di instagram deve essere un URL valido con il protocollo HTTP o HTTPS'),
-		check('facebook').optional()      
-			.isURL({ protocols: ['http', 'https'], require_tld: true, require_protocol: true })
-			.withMessage('Il link di facebook deve essere un URL valido con il protocollo HTTP o HTTPS'),
+		check('trailer')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
+		check('imdb')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il link di imdb deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
+		check('instagram')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il link di instagram deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
+		check('facebook')
+			.optional()
+			.isURL({
+				protocols: ['http', 'https'],
+				require_tld: true,
+				require_protocol: true,
+			})
+			.withMessage(
+				'Il link di facebook deve essere un URL valido con il protocollo HTTP o HTTPS'
+			),
 	],
 	editFilm
 );

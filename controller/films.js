@@ -46,7 +46,7 @@ exports.addFilm = async (req, res) => {
 		trailer,
 		imdb,
 		instagram,
-		facebook
+		facebook,
 	} = req.body;
 
 	const image = req.file;
