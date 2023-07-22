@@ -21,6 +21,14 @@ const filmSchema = new Schema({
 			},
 		},
 	],
+	producers: [
+		{
+			producerName: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 	screenwriters: [
 		{
 			screenwriterName: {
@@ -37,9 +45,52 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	editing: {
+		type: String,
+		required: true,
+	},
+	scenography: {
+		type: String,
+		required: true,
+	},
+	costumes: {
+		type: String,
+		required: true,
+	},
+	music: {
+		type: String,
+		required: true,
+	},
+	sound: {
+		type: String,
+		required: true,
+	},
+	soundDesign: {
+		type: String,
+		required: true,
+	},
+	casting: {
+		type: String,
+		required: true,
+	},
+	lineProducer: {
+		type: String,
+		required: true,
+	},
+	executiveProducer: {
+		type: String,
+		required: true,
+	},
+	firstAssistantDirector: {
+		type: String,
+		required: true,
+	},
 	synopsis: {
 		type: String,
 		required: true,
+	},
+	productionNotes: {
+		type: String,
 	},
 	duration: {
 		type: Number,

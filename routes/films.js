@@ -17,7 +17,7 @@ router.post(
 	'/add-film',
 	[
 		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
-		check('director').isString().isLength({ min: 6, max: 30 }).trim(),
+		check('director').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('productions')
 			.isArray({ min: 1 })
 			.withMessage(
@@ -30,12 +30,35 @@ router.post(
 					if (
 						!productionName ||
 						(productionName.trim().length < 6 &&
-							productionName.trim().length > 50)
+							productionName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome della società di produzione ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 50`
+							} deve contenere almeno 6 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('producers')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco delle produzioni deve contenere almeno una società di produzione"
+			)
+			.custom((producers) => {
+				producers.forEach((producer, index) => {
+					const { producerName } = producer;
+
+					if (
+						!producerName ||
+						(producerName.trim().length < 6 &&
+							producerName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome della società di produzione ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 				});
@@ -51,7 +74,7 @@ router.post(
 					if (
 						!screenwriterName ||
 						(screenwriterName.trim().length < 6 &&
-							screenwriterName.trim().length > 30)
+							screenwriterName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome dello sceneggiatore ${
@@ -65,9 +88,50 @@ router.post(
 		check('genre').isString().trim(),
 		check('directorOfPhotography')
 			.isString()
-			.isLength({ min: 6, max: 30 })
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('editing')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('scenography')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('costumes')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('music')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('sound')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('soundDesign')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('casting')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('lineProducer')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('executiveProducer')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('firstAssistantDirector')
+			.isString()
+			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
+		check('productionNotes').isString().isLength({ min: 10, max: 300 }).trim(),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
@@ -130,6 +194,29 @@ router.put(
 				});
 				return true;
 			}),
+		check('producers')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco delle produzioni deve contenere almeno una società di produzione"
+			)
+			.custom((producers) => {
+				producers.forEach((producer, index) => {
+					const { producerName } = producer;
+
+					if (
+						!producerName ||
+						(producerName.trim().length < 6 &&
+							producerName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome della società di produzione ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
 		check('screenwriters')
 			.isArray({ min: 1 })
 			.withMessage("L'elenco degli sceneggiatori deve contenere almeno un nome")
@@ -140,7 +227,7 @@ router.put(
 					if (
 						!screenwriterName ||
 						(screenwriterName.trim().length < 6 &&
-							screenwriterName.trim().length > 30)
+							screenwriterName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome dello sceneggiatore ${
@@ -154,9 +241,50 @@ router.put(
 		check('genre').isString().trim(),
 		check('directorOfPhotography')
 			.isString()
-			.isLength({ min: 6, max: 30 })
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('editing')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('scenography')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('costumes')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('music')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('sound')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('soundDesign')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('casting')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('lineProducer')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('executiveProducer')
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('firstAssistantDirector')
+			.isString()
+			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
+		check('productionNotes').isString().isLength({ min: 10, max: 300 }).trim(),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
