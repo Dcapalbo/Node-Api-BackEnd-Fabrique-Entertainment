@@ -43,6 +43,18 @@ const filmSchema = new Schema({
 			},
 		},
 	],
+	actors: [
+		{
+			actorName: {
+				type: String,
+				required: true,
+			},
+			actorRole: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 	screenwriters: [
 		{
 			screenwriterName: {

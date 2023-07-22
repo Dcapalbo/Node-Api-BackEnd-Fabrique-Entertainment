@@ -25,6 +25,7 @@ exports.addFilm = async (req, res) => {
 		producers,
 		coProductions,
 		coProducers,
+		actors,
 		screenwriters,
 		genre,
 		directorOfPhotography,
@@ -53,6 +54,8 @@ exports.addFilm = async (req, res) => {
 		facebook,
 	} = req.body;
 
+	console.log(req.body);
+
 	const image = req.file;
 
 	const errors = validationResult(req);
@@ -67,6 +70,7 @@ exports.addFilm = async (req, res) => {
 				producers,
 				coProductions,
 				coProducers,
+				actors,
 				screenwriters,
 				genre,
 				directorOfPhotography,
@@ -113,6 +117,7 @@ exports.addFilm = async (req, res) => {
 			producers,
 			coProductions,
 			coProducers,
+			actors,
 			screenwriters,
 			genre,
 			directorOfPhotography,
@@ -161,6 +166,7 @@ exports.editFilm = async (req, res) => {
 		producers,
 		coProductions,
 		coProducers,
+		actors,
 		screenwriters,
 		genre,
 		directorOfPhotography,
@@ -210,6 +216,7 @@ exports.editFilm = async (req, res) => {
 		producers,
 		coProductions,
 		coProducers,
+		actors,
 		screenwriters,
 		genre,
 		directorOfPhotography,
@@ -253,6 +260,7 @@ exports.editFilm = async (req, res) => {
 				producers,
 				coProductions,
 				coProducers,
+				actors,
 				screenwriters,
 				genre,
 				directorOfPhotography,

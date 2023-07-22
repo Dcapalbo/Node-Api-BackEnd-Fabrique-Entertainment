@@ -101,6 +101,39 @@ router.post(
 
 			return true;
 		}),
+		check('actors')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco degli attori deve contenere almeno un nome e un ruolo"
+			)
+			.custom((actors) => {
+				actors.forEach((actor, index) => {
+					const { actorName, actorRole } = actor;
+
+					if (
+						!actorName ||
+						(actorName.trim().length < 6 && actorName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome dell'attore ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 30`
+						);
+					}
+
+					if (
+						!actorRole ||
+						(actorRole.trim().length < 6 && actorRole.trim().length > 40)
+					) {
+						throw new Error(
+							`Il ruolo dell'attore ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 30`
+						);
+					}
+				});
+				return true;
+			}),
 		check('screenwriters')
 			.isArray({ min: 1 })
 			.withMessage("L'elenco degli sceneggiatori deve contenere almeno un nome")
@@ -316,6 +349,39 @@ router.put(
 
 			return true;
 		}),
+		check('actors')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco degli attori deve contenere almeno un nome e un ruolo"
+			)
+			.custom((actors) => {
+				actors.forEach((actor, index) => {
+					const { actorName, actorRole } = actor;
+
+					if (
+						!actorName ||
+						(actorName.trim().length < 6 && actorName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome dell'attore ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 30`
+						);
+					}
+
+					if (
+						!actorRole ||
+						(actorRole.trim().length < 6 && actorRole.trim().length > 40)
+					) {
+						throw new Error(
+							`Il ruolo dell'attore ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 30`
+						);
+					}
+				});
+				return true;
+			}),
 		check('screenwriters')
 			.isArray({ min: 1 })
 			.withMessage("L'elenco degli sceneggiatori deve contenere almeno un nome")
