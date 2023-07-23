@@ -171,14 +171,6 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	coverImage: {
-		data: Buffer,
-		contentType: String,
-	},
-	pressBookPdf: {
-		data: Buffer,
-		contentType: String,
-	},
 });
 
 // / exporting the model and the Schema

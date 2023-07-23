@@ -2,6 +2,8 @@
 
 const { validationResult } = require('express-validator');
 const { deleteFile } = require('../util/functions');
+const { uploadFile } = require('../s3Config');
+const { v4: uuidv4 } = require('uuid');
 const Film = require('../model/film');
 const fs = require('fs');
 
@@ -55,11 +57,6 @@ exports.addFilm = async (req, res) => {
 		facebook,
 	} = req.body;
 
-	const cover = req.files.find((cover) => cover.fieldname === 'coverImage');
-	const pressBook = req.files.find(
-		(pressBook) => pressBook.fieldname === 'pressBookPdf'
-	);
-
 	const errors = validationResult(req);
 	// if there are errors
 	// Send a response with the status and a json
@@ -106,12 +103,21 @@ exports.addFilm = async (req, res) => {
 			validationErrors: errors.array(),
 		});
 	}
+
+	const coverImage = req.files.find((file) => file.fieldname === 'coverImage');
 	// saving the data inside the db
 	try {
 		const existingFilm = await Film.findOne({ title });
 		if (existingFilm) {
 			return res.status(400).json({ message: 'The film exist already' });
 		}
+
+		if (!coverImage) {
+			coverUrl = null;
+		}
+
+		const result = await uploadFile(coverImage);
+		console.log(result);
 
 		const film = await Film.create({
 			title,
@@ -148,14 +154,6 @@ exports.addFilm = async (req, res) => {
 			imdb: imdb ?? null,
 			instagram: instagram ?? null,
 			facebook: facebook ?? null,
-			coverImage: {
-				data: fs.readFileSync('images/' + cover.filename),
-				contentType: cover.mimetype,
-			},
-			pressBookPdf: {
-				data: fs.readFileSync('images/' + pressBook.filename),
-				contentType: pressBook.mimetype,
-			},
 		});
 
 		return res.status(201).send(film);
@@ -261,8 +259,6 @@ exports.editFilm = async (req, res) => {
 		imdb: imdb ?? null,
 		instagram: instagram ?? null,
 		facebook: facebook ?? null,
-		coverImage,
-		pressBookPdf,
 	};
 
 	console.log(req);
@@ -335,9 +331,9 @@ exports.deleteFilm = async (req, res) => {
 		res.status(200).json({
 			message: 'The film has been deleted',
 		});
-		console.log('The film has been deleted');
 	} catch (error) {
-		res.status(500).send(error.message);
-		console.log('Something went wrong while deleting a film: ', error.message);
+		res
+			.status(500)
+			.json({ message: 'Something went wrong while deleting a film:', error });
 	}
 };
