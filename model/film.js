@@ -171,7 +171,11 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	imageUrl: {
+	coverImage: {
+		data: Buffer,
+		contentType: String,
+	},
+	pressBookPdf: {
 		data: Buffer,
 		contentType: String,
 	},

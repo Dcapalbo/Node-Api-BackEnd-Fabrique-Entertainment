@@ -55,9 +55,10 @@ exports.addFilm = async (req, res) => {
 		facebook,
 	} = req.body;
 
-	console.log(req.body);
-
-	const image = req.file;
+	const cover = req.files.find((cover) => cover.fieldname === 'coverImage');
+	const pressBook = req.files.find(
+		(pressBook) => pressBook.fieldname === 'pressBookPdf'
+	);
 
 	const errors = validationResult(req);
 	// if there are errors
@@ -147,16 +148,19 @@ exports.addFilm = async (req, res) => {
 			imdb: imdb ?? null,
 			instagram: instagram ?? null,
 			facebook: facebook ?? null,
-			imageUrl: {
-				data: fs.readFileSync('images/' + image.filename),
-				contentType: 'image/png',
+			coverImage: {
+				data: fs.readFileSync('images/' + cover.filename),
+				contentType: cover.mimetype,
+			},
+			pressBookPdf: {
+				data: fs.readFileSync('images/' + pressBook.filename),
+				contentType: pressBook.mimetype,
 			},
 		});
 
-		deleteFile('images/' + image.filename);
 		return res.status(201).send(film);
 	} catch (error) {
-		return res.status(500).json({ message: 'Something went wrong.' });
+		return res.status(500).json({ message: 'Something went wrong.', error });
 	}
 };
 
@@ -207,10 +211,19 @@ exports.editFilm = async (req, res) => {
 		});
 	}
 
-	const image = req.file;
-	const imageUrl = {
-		data: fs.readFileSync('images/' + image.filename),
-		contentType: image.mimetype,
+	const cover = req.files.find((cover) => cover.fieldname === 'coverImage');
+	const pressBook = req.files.find(
+		(pressBook) => pressBook.fieldname === 'pressBookPdf'
+	);
+
+	const coverImage = {
+		data: fs.readFileSync('images/' + cover.filename),
+		contentType: cover.mimetype,
+	};
+
+	const pressBookPdf = {
+		data: fs.readFileSync('images/' + pressBook.filename),
+		contentType: pressBook.mimetype,
 	};
 
 	const update = {
@@ -248,10 +261,11 @@ exports.editFilm = async (req, res) => {
 		imdb: imdb ?? null,
 		instagram: instagram ?? null,
 		facebook: facebook ?? null,
-		imageUrl,
+		coverImage,
+		pressBookPdf,
 	};
 
-	console.log(req.body);
+	console.log(req);
 
 	const errors = validationResult(req);
 	// if there are errors
@@ -303,13 +317,13 @@ exports.editFilm = async (req, res) => {
 		const updatedFilm = await Film.findByIdAndUpdate(_id, update, {
 			new: true,
 		});
-		deleteFile('images/' + image.filename);
+		deleteFile('images/' + cover.filename);
 		res.status(200).json(updatedFilm);
 	} catch (error) {
-		console.log(error);
-		res
-			.status(500)
-			.json({ message: 'Was not possible to update the specific film.' });
+		res.status(500).json({
+			message: 'Was not possible to update the specific film.',
+			error,
+		});
 	}
 };
 

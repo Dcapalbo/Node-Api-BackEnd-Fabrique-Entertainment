@@ -90,11 +90,11 @@ router.post(
 			coProducers.forEach((coProducer, index) => {
 				const { coProducerName } = coProducer;
 
-				if (coProducerName.length < 10 || coProducerName.length > 40) {
+				if (coProducerName.length < 6 || coProducerName.length > 40) {
 					throw new Error(
 						`Il nome del co-produttore ${
 							index + 1
-						} deve contenere almeno 10 caratteri e non più di 40`
+						} deve contenere almeno 6 caratteri e non più di 40`
 					);
 				}
 			});
@@ -112,12 +112,12 @@ router.post(
 
 					if (
 						!actorName ||
-						(actorName.trim().length < 6 && actorName.trim().length > 40)
+						(actorName.trim().length < 3 && actorName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome dell'attore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 40`
+							} deve contenere almeno 3 caratteri e non più di 40`
 						);
 					}
 
@@ -360,11 +360,11 @@ router.put(
 			coProducers.forEach((coProducer, index) => {
 				const { coProducerName } = coProducer;
 
-				if (coProducerName.length < 10 || coProducerName.length > 40) {
+				if (coProducerName.length < 6 || coProducerName.length > 40) {
 					throw new Error(
 						`Il nome del co-produttore ${
 							index + 1
-						} deve contenere almeno 10 caratteri e non più di 40`
+						} deve contenere almeno 6 caratteri e non più di 40`
 					);
 				}
 			});
