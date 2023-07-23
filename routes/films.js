@@ -71,11 +71,11 @@ router.post(
 			coProductions.forEach((coProduction, index) => {
 				const { coProductionName } = coProduction;
 
-				if (coProductionName.length < 10 || coProductionName.length > 40) {
+				if (coProductionName.length < 6 || coProductionName.length > 40) {
 					throw new Error(
 						`Il nome della co-produzione ${
 							index + 1
-						} deve contenere almeno 10 caratteri e non più di 40`
+						} deve contenere almeno 6 caratteri e non più di 40`
 					);
 				}
 			});
@@ -117,18 +117,40 @@ router.post(
 						throw new Error(
 							`Il nome dell'attore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 30`
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 
 					if (
 						!actorRole ||
-						(actorRole.trim().length < 6 && actorRole.trim().length > 40)
+						(actorRole.trim().length < 3 && actorRole.trim().length > 40)
 					) {
 						throw new Error(
 							`Il ruolo dell'attore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 30`
+							} deve contenere almeno 3 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('subjects')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco degli scrittori del soggetto deve contenere almeno un nome"
+			)
+			.custom((subjects) => {
+				subjects.forEach((subject, index) => {
+					const { subjectName } = subject;
+
+					if (
+						!subjectName ||
+						(subjectName.trim().length < 6 && subjectName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome dello scritore del soggetto ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 				});
@@ -149,7 +171,7 @@ router.post(
 						throw new Error(
 							`Il nome dello sceneggiatore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 30`
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 				});
@@ -206,11 +228,11 @@ router.post(
 
 			festivals.forEach((festival, index) => {
 				const { festivalName } = festival;
-				if (festivalName.length < 10 || festivalName.length > 50) {
+				if (festivalName.length < 10 || festivalName.length > 80) {
 					throw new Error(
 						`Il nome del festival ${
 							index + 1
-						} deve contenere almeno 10 caratteri e non più di 50`
+						} deve contenere almeno 10 caratteri e non più di 80`
 					);
 				}
 			});
@@ -365,18 +387,18 @@ router.put(
 						throw new Error(
 							`Il nome dell'attore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 30`
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 
 					if (
 						!actorRole ||
-						(actorRole.trim().length < 6 && actorRole.trim().length > 40)
+						(actorRole.trim().length < 3 && actorRole.trim().length > 40)
 					) {
 						throw new Error(
 							`Il ruolo dell'attore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 30`
+							} deve contenere almeno 3 caratteri e non più di 40`
 						);
 					}
 				});
@@ -397,7 +419,7 @@ router.put(
 						throw new Error(
 							`Il nome dello sceneggiatore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 30`
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 				});
@@ -456,11 +478,11 @@ router.put(
 
 			festivals.forEach((festival, index) => {
 				const { festivalName } = festival;
-				if (festivalName.length < 10 || festivalName.length > 50) {
+				if (festivalName.length < 10 || festivalName.length > 80) {
 					throw new Error(
 						`Il nome del festival ${
 							index + 1
-						} deve contenere almeno 10 caratteri e non più di 50`
+						} deve contenere almeno 10 caratteri e non più di 80`
 					);
 				}
 			});

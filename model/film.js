@@ -55,6 +55,14 @@ const filmSchema = new Schema({
 			},
 		},
 	],
+	subjects: [
+		{
+			subjectName: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 	screenwriters: [
 		{
 			screenwriterName: {
