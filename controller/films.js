@@ -2,20 +2,31 @@
 
 const { validationResult } = require('express-validator');
 const { deleteFile } = require('../util/functions');
-const { uploadFile } = require('../s3Config');
-const { v4: uuidv4 } = require('uuid');
 const Film = require('../model/film');
 const fs = require('fs');
+const {
+	uploadFile,
+	getImageUrlFromS3,
+	getImageKeysFromFilm,
+	deleteImageFromS3,
+} = require('../s3Config');
 
 // GET => Getting all films
 exports.getFilms = async (req, res) => {
 	try {
-		const films = await Film.find().sort({
-			year: -1,
-		});
-		res.status(200).send(films);
-	} catch {
-		res.status(404).json({ message: 'Films was not found' });
+		const films = await Film.find().sort({ year: -1 });
+		const filmsWithImages = await Promise.all(
+			films.map(async (film) => {
+				const coverImageUrl = await getImageUrlFromS3(film.coverImageKey);
+				const pressBookPdfUrl = await getImageUrlFromS3(film.pressBookPdfKey);
+
+				return { ...film.toObject(), coverImageUrl, pressBookPdfUrl };
+			})
+		);
+
+		res.status(200).send(filmsWithImages);
+	} catch (error) {
+		res.status(404).json({ message: 'Films was not found', error });
 	}
 };
 // POST => Adding a Film
@@ -104,20 +115,20 @@ exports.addFilm = async (req, res) => {
 		});
 	}
 
-	const coverImage = req.files.find((file) => file.fieldname === 'coverImage');
-	// saving the data inside the db
+	const cover = req.files.find((file) => file.fieldname === 'coverImage');
+	const pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
+
+	const coverImageKey = `films/${title}/cover/${cover.originalname}`;
+	const pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
+	// saving the data inside the db and the images on s3
 	try {
 		const existingFilm = await Film.findOne({ title });
 		if (existingFilm) {
 			return res.status(400).json({ message: 'The film exist already' });
 		}
 
-		if (!coverImage) {
-			coverUrl = null;
-		}
-
-		const result = await uploadFile(coverImage);
-		console.log(result);
+		await uploadFile(cover, coverImageKey);
+		await uploadFile(pressBook, pressBookPdfKey);
 
 		const film = await Film.create({
 			title,
@@ -154,6 +165,8 @@ exports.addFilm = async (req, res) => {
 			imdb: imdb ?? null,
 			instagram: instagram ?? null,
 			facebook: facebook ?? null,
+			coverImageKey,
+			pressBookPdfKey,
 		});
 
 		return res.status(201).send(film);
@@ -323,17 +336,30 @@ exports.editFilm = async (req, res) => {
 	}
 };
 
-//DELETE => Delete a single product using the prod id and user id
+//DELETE => Delete a single film using the film id and the s3 images correlated to it
 exports.deleteFilm = async (req, res) => {
 	const filmId = req.body._id;
 	try {
+		const film = await Film.findById(filmId);
+		if (!film) {
+			return res.status(404).json({ message: 'Film not found' });
+		}
+
+		const imageKeys = getImageKeysFromFilm(film);
+		const deletePromises = imageKeys.map((imageKey) =>
+			deleteImageFromS3(imageKey)
+		);
+
+		await Promise.all(deletePromises);
 		await Film.findByIdAndRemove(filmId);
-		res.status(200).json({
-			message: 'The film has been deleted',
+
+		return res.status(200).json({
+			message: 'The film and its associated images have been deleted',
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ message: 'Something went wrong while deleting a film:', error });
+		return res.status(500).json({
+			message: 'Something went wrong while deleting a film:',
+			error,
+		});
 	}
 };

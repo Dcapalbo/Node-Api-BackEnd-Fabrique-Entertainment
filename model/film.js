@@ -171,6 +171,12 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	coverImageKey: {
+		type: String,
+	},
+	pressBookPdfKey: {
+		type: String,
+	},
 });
 
 // / exporting the model and the Schema

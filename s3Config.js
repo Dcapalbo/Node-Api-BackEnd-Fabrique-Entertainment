@@ -14,16 +14,67 @@ const s3 = new S3({
 	secretAccessKey,
 });
 
-function uploadFile(file) {
+const uploadFile = (file, fileKey) => {
 	const fileStream = fs.createReadStream(file.path);
 
 	const uploadParams = {
 		Bucket: bucketName,
 		Body: fileStream,
-		Key: file.filename,
+		Key: fileKey,
+		ContentType: file.mimetype,
 	};
 
 	return s3.upload(uploadParams).promise();
-}
+};
 
-exports.uploadFile = uploadFile;
+const getImageUrlFromS3 = async (imageKey) => {
+	const params = {
+		Bucket: bucketName,
+		Key: imageKey,
+	};
+
+	return new Promise((resolve, reject) => {
+		s3.getSignedUrl('getObject', params, (err, url) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(url);
+			}
+		});
+	});
+};
+
+const deleteImageFromS3 = (imageKey) => {
+	const params = {
+		Bucket: bucketName,
+		Key: imageKey,
+	};
+
+	return new Promise((resolve, reject) => {
+		s3.deleteObject(params, (err, data) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(data);
+			}
+		});
+	});
+};
+
+const getImageKeysFromFilm = (film) => {
+	const imageKeys = [];
+	if (film.coverImageKey) {
+		imageKeys.push(film.coverImageKey);
+	}
+	if (film.pressBookPdfKey) {
+		imageKeys.push(film.pressBookPdfKey);
+	}
+	return imageKeys;
+};
+
+module.exports = {
+	uploadFile,
+	getImageUrlFromS3,
+	getImageKeysFromFilm,
+	deleteImageFromS3,
+};
