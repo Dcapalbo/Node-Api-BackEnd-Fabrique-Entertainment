@@ -212,14 +212,35 @@ router.post(
 				});
 				return true;
 			}),
-		check('distributor').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('salesAgent').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('distributor').custom((distributor, { req }) => {
+			if (!distributor) return true;
+			return req
+				.check('distributor')
+				.isString()
+				.isLength({ min: 6, max: 40 })
+				.trim();
+		}),
+		check('salesAgent').custom((salesAgent, { req }) => {
+			if (!salesAgent) return true;
+			return req
+				.check('salesAgent')
+				.isString()
+				.isLength({ min: 6, max: 40 })
+				.trim();
+		}),
 		check('firstAssistantDirector')
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
-		check('productionNotes').isString().isLength({ min: 10, max: 300 }).trim(),
+		check('productionNotes').custom((productionNotes, { req }) => {
+			if (!productionNotes) return true;
+			return req
+				.check('productionNotes')
+				.isString()
+				.isLength({ min: 10, max: 300 })
+				.trim();
+		}),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
@@ -462,14 +483,35 @@ router.put(
 				});
 				return true;
 			}),
-		check('distributor').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('salesAgent').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('distributor').custom((distributor, { req }) => {
+			if (!distributor) return true;
+			return req
+				.check('distributor')
+				.isString()
+				.isLength({ min: 6, max: 40 })
+				.trim();
+		}),
+		check('salesAgent').custom((salesAgent, { req }) => {
+			if (!salesAgent) return true;
+			return req
+				.check('salesAgent')
+				.isString()
+				.isLength({ min: 6, max: 40 })
+				.trim();
+		}),
 		check('firstAssistantDirector')
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
-		check('productionNotes').isString().isLength({ min: 10, max: 300 }).trim(),
+		check('productionNotes').custom((productionNotes, { req }) => {
+			if (!productionNotes) return true;
+			return req
+				.check('productionNotes')
+				.isString()
+				.isLength({ min: 10, max: 300 })
+				.trim();
+		}),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
