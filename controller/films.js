@@ -132,11 +132,6 @@ exports.addFilm = async (req, res) => {
 		});
 	}
 
-	const cover = req.files.find((file) => file.fieldname === 'coverImage');
-	const pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
-
-	const coverImageKey = `films/${title}/cover/${cover.originalname}`;
-	const pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
 	// saving the data inside the db and the images on s3
 	try {
 		const existingFilm = await Film.findOne({ title });
@@ -144,8 +139,18 @@ exports.addFilm = async (req, res) => {
 			return res.status(400).json({ message: 'The film exist already' });
 		}
 
+		const cover = req.files.find((file) => file.fieldname === 'coverImage');
+		const coverImageKey = `films/${title}/cover/${cover.originalname}`;
+
 		await uploadFile(cover, coverImageKey);
-		await uploadFile(pressBook, pressBookPdfKey);
+
+		let pressBook, pressBookPdfKey;
+
+		if (req.files.find((file) => file.fieldname === 'pressBookPdf')) {
+			pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
+			pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
+			await uploadFile(pressBook, pressBookPdfKey);
+		}
 
 		const film = await Film.create({
 			title,
