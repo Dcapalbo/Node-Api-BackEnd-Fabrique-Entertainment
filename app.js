@@ -12,6 +12,7 @@ const contactRoutes = require('./routes/contacts');
 const usersRoutes = require('./routes/users');
 const multer = require('multer');
 const cors = require('cors');
+const { deleteImageFromS3 } = require('./s3Config');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

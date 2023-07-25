@@ -8,6 +8,7 @@ const {
 	addFilm,
 	editFilm,
 	deleteFilm,
+	deleteImage,
 } = require('../controller/films');
 
 //films => GET ALL
@@ -534,5 +535,7 @@ router.put(
 );
 //delete-film => DELETE
 router.delete('/delete-film', deleteFilm);
+//delete-image => DELETE
+router.delete('/delete-image', deleteImage);
 
 module.exports = router;

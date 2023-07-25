@@ -17,14 +17,31 @@ exports.getFilms = async (req, res) => {
 		const films = await Film.find().sort({ year: -1 });
 		const filmsWithImages = await Promise.all(
 			films.map(async (film) => {
-				const coverImageUrl = await getImageUrlFromS3(film.coverImageKey);
-				const pressBookPdfUrl = await getImageUrlFromS3(film.pressBookPdfKey);
+				let coverImageUrl, pressBookPdfUrl;
 
-				return { ...film.toObject(), coverImageUrl, pressBookPdfUrl };
+				if (film.coverImageKey) {
+					coverImageUrl = await getImageUrlFromS3(film.coverImageKey);
+				}
+
+				if (film.pressBookPdfKey) {
+					pressBookPdfUrl = await getImageUrlFromS3(film.pressBookPdfKey);
+				}
+
+				return {
+					...film.toObject(),
+					cover: {
+						coverImageUrl,
+						coverImageKey: film.coverImageKey,
+					},
+					pressBook: {
+						pressBookPdfUrl,
+						pressBookPdfKey: film.pressBookPdfKey,
+					},
+				};
 			})
 		);
 
-		res.status(200).send(filmsWithImages);
+		res.status(200).send(filmsWithImages ? filmsWithImages : films);
 	} catch (error) {
 		res.status(404).json({ message: 'Films was not found', error });
 	}
@@ -361,5 +378,34 @@ exports.deleteFilm = async (req, res) => {
 			message: 'Something went wrong while deleting a film:',
 			error,
 		});
+	}
+};
+//DELETE IMAGE => delete one specific image from s3
+exports.deleteImage = async (req, res) => {
+	const imageKey = req.query.image_key;
+
+	try {
+		const deleteResult = await deleteImageFromS3(imageKey);
+		const film = await Film.findOne({
+			$or: [{ coverImageKey: imageKey }, { pressBookPdfKey: imageKey }],
+		});
+
+		if (!film) {
+			return res.status(404).json({ message: 'Film not found' });
+		}
+
+		if (film.coverImageKey === imageKey) {
+			film.coverImageKey = null;
+		}
+		if (film.pressBookPdfKey === imageKey) {
+			film.pressBookPdfKey = null;
+		}
+
+		await film.save();
+
+		res.json({ message: 'Image deleted from S3 successfully', deleteResult });
+	} catch (error) {
+		console.error('Error deleting image from S3:', error);
+		res.status(500).json({ message: 'Error deleting image from S3.', error });
 	}
 };
