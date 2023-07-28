@@ -9,7 +9,9 @@ const {
 	getImageUrlFromS3,
 	getImageKeysFromFilm,
 	deleteImageFromS3,
+	findImageKey,
 } = require('../s3Config');
+const film = require('../model/film');
 
 // GET => Getting all films
 exports.getFilms = async (req, res) => {
@@ -191,6 +193,9 @@ exports.addFilm = async (req, res) => {
 			pressBookPdfKey,
 		});
 
+		deleteFile('images/' + cover.filename);
+		deleteFile('images/' + pressBook.filename);
+
 		return res.status(201).send(film);
 	} catch (error) {
 		return res.status(500).json({ message: 'Something went wrong.', error });
@@ -199,6 +204,9 @@ exports.addFilm = async (req, res) => {
 
 // PUT => Editing a product
 exports.editFilm = async (req, res) => {
+	let coverImageKey = req.body.coverImageKey;
+	let pressBookPdfKey = req.body.pressBookPdfKey;
+
 	const {
 		title,
 		director,
@@ -244,20 +252,37 @@ exports.editFilm = async (req, res) => {
 		});
 	}
 
-	const cover = req.files.find((cover) => cover.fieldname === 'coverImage');
-	const pressBook = req.files.find(
-		(pressBook) => pressBook.fieldname === 'pressBookPdf'
-	);
+	if (req.files) {
+		const cover = req.files.find((file) => file.fieldname === 'coverImage');
+		coverImageKey = `films/${title}/cover/${cover.originalname}`;
 
-	const coverImage = {
-		data: fs.readFileSync('images/' + cover.filename),
-		contentType: cover.mimetype,
-	};
+		if (req.files.find((file) => file.fieldname === 'pressBookPdf')) {
+			const pressBook = req.files.find(
+				(file) => file.fieldname === 'pressBookPdf'
+			);
+			pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
+		}
 
-	const pressBookPdf = {
-		data: fs.readFileSync('images/' + pressBook.filename),
-		contentType: pressBook.mimetype,
-	};
+		const presentFilm = await film.findById(_id);
+
+		if (presentFilm.coverImageKey !== coverImageKey) {
+			const findCoverImageS3 = await findImageKey(presentFilm.coverImageKey);
+			if (findCoverImageS3) {
+				await deleteImageFromS3(presentFilm.coverImageKey);
+				await uploadFile(cover, coverImageKey);
+			}
+		}
+
+		if (presentFilm.pressBookPdfKey !== pressBookPdfKey) {
+			const findPressBookPdfS3 = await findImageKey(
+				presentFilm.pressBookPdfKey
+			);
+			if (findPressBookPdfS3) {
+				await deleteImageFromS3(presentFilm.pressBookPdfKey);
+				await deleteImageFromS3(pressBook, presentFilm.pressBookPdfKey);
+			}
+		}
+	}
 
 	const update = {
 		title,
@@ -294,9 +319,9 @@ exports.editFilm = async (req, res) => {
 		imdb: imdb ?? null,
 		instagram: instagram ?? null,
 		facebook: facebook ?? null,
+		coverImageKey,
+		pressBookPdfKey,
 	};
-
-	console.log(req);
 
 	const errors = validationResult(req);
 	// if there are errors
@@ -338,6 +363,8 @@ exports.editFilm = async (req, res) => {
 				imdb: imdb ?? null,
 				instagram: instagram ?? null,
 				facebook: facebook ?? null,
+				coverImageKey,
+				pressBookPdfKey,
 			},
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,
@@ -348,7 +375,7 @@ exports.editFilm = async (req, res) => {
 		const updatedFilm = await Film.findByIdAndUpdate(_id, update, {
 			new: true,
 		});
-		deleteFile('images/' + cover.filename);
+
 		res.status(200).json(updatedFilm);
 	} catch (error) {
 		res.status(500).json({

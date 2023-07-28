@@ -61,6 +61,23 @@ const deleteImageFromS3 = (imageKey) => {
 	});
 };
 
+const findImageKey = async (imageKey) => {
+	const params = {
+		Bucket: bucketName,
+		Key: imageKey,
+	};
+
+	return new Promise((resolve, reject) => {
+		s3.headObject(params, (err, data) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(data);
+			}
+		});
+	});
+};
+
 const getImageKeysFromFilm = (film) => {
 	const imageKeys = [];
 	if (film.coverImageKey) {
@@ -77,4 +94,5 @@ module.exports = {
 	getImageUrlFromS3,
 	getImageKeysFromFilm,
 	deleteImageFromS3,
+	findImageKey,
 };
