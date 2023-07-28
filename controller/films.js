@@ -3,7 +3,6 @@
 const { validationResult } = require('express-validator');
 const { deleteFile } = require('../util/functions');
 const Film = require('../model/film');
-const fs = require('fs');
 const {
 	uploadFile,
 	getImageUrlFromS3,
@@ -43,9 +42,9 @@ exports.getFilms = async (req, res) => {
 			})
 		);
 
-		res.status(200).send(filmsWithImages ? filmsWithImages : films);
+		return res.status(200).send(filmsWithImages ? filmsWithImages : films);
 	} catch (error) {
-		res.status(404).json({ message: 'Films was not found', error });
+		return res.status(404).json({ message: 'Films was not found', error });
 	}
 };
 // POST => Adding a Film
@@ -252,20 +251,24 @@ exports.editFilm = async (req, res) => {
 		});
 	}
 
-	if (req.files) {
-		const cover = req.files.find((file) => file.fieldname === 'coverImage');
+	if (req.files.length > 0) {
+		let pressBook, cover;
+
+		cover = req.files.find((file) => file.fieldname === 'coverImage');
 		coverImageKey = `films/${title}/cover/${cover.originalname}`;
 
 		if (req.files.find((file) => file.fieldname === 'pressBookPdf')) {
-			const pressBook = req.files.find(
-				(file) => file.fieldname === 'pressBookPdf'
-			);
+			pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
 			pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
 		}
 
 		const presentFilm = await film.findById(_id);
 
-		if (presentFilm.coverImageKey !== coverImageKey) {
+		if (
+			presentFilm?.coverImageKey !== undefined &&
+			presentFilm?.coverImageKey !== null &&
+			presentFilm?.coverImageKey !== coverImageKey
+		) {
 			const findCoverImageS3 = await findImageKey(presentFilm.coverImageKey);
 			if (findCoverImageS3) {
 				await deleteImageFromS3(presentFilm.coverImageKey);
@@ -273,15 +276,22 @@ exports.editFilm = async (req, res) => {
 			}
 		}
 
-		if (presentFilm.pressBookPdfKey !== pressBookPdfKey) {
+		if (
+			presentFilm?.pressBookPdfKey !== undefined &&
+			presentFilm?.pressBookPdfKey !== null &&
+			presentFilm?.pressBookPdfKey !== pressBookPdfKey
+		) {
 			const findPressBookPdfS3 = await findImageKey(
 				presentFilm.pressBookPdfKey
 			);
 			if (findPressBookPdfS3) {
 				await deleteImageFromS3(presentFilm.pressBookPdfKey);
-				await deleteImageFromS3(pressBook, presentFilm.pressBookPdfKey);
+				await uploadFile(pressBook, presentFilm.pressBookPdfKey);
 			}
 		}
+
+		await uploadFile(cover, coverImageKey);
+		await uploadFile(pressBook, pressBookPdfKey);
 	}
 
 	const update = {
@@ -376,6 +386,9 @@ exports.editFilm = async (req, res) => {
 			new: true,
 		});
 
+		deleteFile('images/' + cover.filename);
+		deleteFile('images/' + pressBook.filename);
+
 		res.status(200).json(updatedFilm);
 	} catch (error) {
 		res.status(500).json({
@@ -388,8 +401,10 @@ exports.editFilm = async (req, res) => {
 //DELETE => Delete a single film using the film id and the s3 images correlated to it
 exports.deleteFilm = async (req, res) => {
 	const filmId = req.body._id;
+
 	try {
 		const film = await Film.findById(filmId);
+
 		if (!film) {
 			return res.status(404).json({ message: 'Film not found' });
 		}
@@ -403,7 +418,7 @@ exports.deleteFilm = async (req, res) => {
 		await Film.findByIdAndRemove(filmId);
 
 		return res.status(200).json({
-			message: 'The film and its associated images have been deleted',
+			message: 'The film and its associated images has been deleted',
 		});
 	} catch (error) {
 		return res.status(500).json({
@@ -412,7 +427,7 @@ exports.deleteFilm = async (req, res) => {
 		});
 	}
 };
-//DELETE IMAGE => delete one specific image from s3
+//DELETE IMAGE => delete one specific image attached to the film from s3
 exports.deleteImage = async (req, res) => {
 	const imageKey = req.query.image_key;
 
