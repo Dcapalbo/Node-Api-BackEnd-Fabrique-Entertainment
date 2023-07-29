@@ -19,13 +19,13 @@ exports.getContacts = async (req, res) => {
 			contacts.map(async (contact) => {
 				let contactImageUrl;
 
-				if (contact.contactImageUrl) {
-					contactImageUrl = await getImageUrlFromS3(contact.contactImageUrl);
+				if (contact.contactImageKey) {
+					contactImageUrl = await getImageUrlFromS3(contact.contactImageKey);
 				}
 
 				return {
 					...contact.toObject(),
-					contact: {
+					profileCover: {
 						contactImageUrl,
 						contactImageKey: contact.contactImageKey,
 					},
@@ -171,6 +171,7 @@ exports.editContact = async (req, res) => {
 			validationErrors: errors.array(),
 		});
 	}
+
 	try {
 		const updatedContact = await Contact.findByIdAndUpdate(_id, update, {
 			new: true,
