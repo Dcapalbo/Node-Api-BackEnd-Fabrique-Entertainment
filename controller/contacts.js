@@ -112,11 +112,11 @@ exports.editContact = async (req, res) => {
 		});
 	}
 
-	if (req.files.length > 0) {
-		let contactImage;
+	let contactImage;
 
-		contactImage = req.files.find((file) => file.fieldname === 'coverImage');
-		contactImageKey = `contacts/${name}/contactPicture/${contactImage.originalname}`;
+	if (req.files.length > 0) {
+		contactImage = req.files.find((file) => file.fieldname === 'contactImage');
+		contactImageKey = `contacts/${name}/profilePicture/${contactImage.originalname}`;
 
 		const presentContact = await Contact.findById(_id);
 
@@ -145,7 +145,6 @@ exports.editContact = async (req, res) => {
 		email,
 		slug,
 		phoneNumber,
-		imageUrl,
 		contactImageKey,
 	};
 
@@ -235,9 +234,13 @@ exports.deleteImage = async (req, res) => {
 
 		await contact.save();
 
-		res.json({ message: 'Contact deleted from S3 successfully', deleteResult });
+		return res.json({
+			message: 'Contact deleted from S3 successfully',
+			deleteResult,
+		});
 	} catch (error) {
-		console.error('Error deleting image from S3:', error);
-		res.status(500).json({ message: 'Error deleting image from S3.', error });
+		return res
+			.status(500)
+			.json({ message: 'Error deleting image from S3.', error });
 	}
 };

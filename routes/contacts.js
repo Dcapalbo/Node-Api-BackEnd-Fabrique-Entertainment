@@ -1,12 +1,18 @@
 /** @format */
 
-const contactsController = require('../controller/contacts');
 const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
+const {
+	getContacts,
+	addContact,
+	editContact,
+	deleteContact,
+	deleteImage,
+} = require('../controller/contacts');
 
 //contacts => GET
-router.get('/get-contacts', contactsController.getContacts);
+router.get('/get-contacts', getContacts);
 //add-contacts => POST
 router.post(
 	'/add-contact',
@@ -22,7 +28,7 @@ router.post(
 			.trim(),
 		check('phoneNumber').isFloat().isLength({ min: 10, max: 15 }),
 	],
-	contactsController.addContact
+	addContact
 );
 //update-contact => PUT
 router.put(
@@ -39,9 +45,11 @@ router.put(
 			.trim(),
 		check('phoneNumber').isFloat().isLength({ min: 10, max: 15 }),
 	],
-	contactsController.editContact
+	editContact
 );
 //delete-contact => DELETE
-router.delete('/delete-contact', contactsController.deleteContact);
+router.delete('/delete-contact', deleteContact);
+//delete-image => DELETE
+router.delete('/delete-contact-image', deleteImage);
 
 module.exports = router;

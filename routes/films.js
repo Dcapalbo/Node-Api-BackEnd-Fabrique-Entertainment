@@ -560,6 +560,6 @@ router.put(
 //delete-film => DELETE
 router.delete('/delete-film', deleteFilm);
 //delete-image => DELETE
-router.delete('/delete-image', deleteImage);
+router.delete('/delete-film-image', deleteImage);
 
 module.exports = router;
