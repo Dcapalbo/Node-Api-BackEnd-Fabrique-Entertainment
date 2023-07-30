@@ -75,7 +75,6 @@ exports.addContact = async (req, res) => {
 		const contactImage = req.files.find(
 			(file) => file.fieldname === 'contactImage'
 		);
-
 		const contactImageKey = `contacts/${name}/profilePicture/${contactImage.originalname}`;
 
 		await uploadFile(contactImage, contactImageKey);
@@ -90,6 +89,8 @@ exports.addContact = async (req, res) => {
 			phoneNumber,
 			contactImageKey,
 		});
+
+		deleteFile('images/' + contactImage.filename);
 
 		return res.status(201).send(contact);
 	} catch (error) {
