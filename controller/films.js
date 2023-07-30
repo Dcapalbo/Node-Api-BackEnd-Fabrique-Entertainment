@@ -6,9 +6,9 @@ const Film = require('../model/film');
 const {
 	uploadFile,
 	getImageUrlFromS3,
-	getImageKeysFromFilm,
 	deleteImageFromS3,
 	findImageKey,
+	getImageKeysFromEntity,
 } = require('../s3Config');
 const film = require('../model/film');
 
@@ -193,7 +193,10 @@ exports.addFilm = async (req, res) => {
 		});
 
 		deleteFile('images/' + cover.filename);
-		deleteFile('images/' + pressBook.filename);
+
+		if (pressBook) {
+			deleteFile('images/' + pressBook.filename);
+		}
 
 		return res.status(201).send(film);
 	} catch (error) {
@@ -387,7 +390,10 @@ exports.editFilm = async (req, res) => {
 		});
 
 		deleteFile('images/' + cover.filename);
-		deleteFile('images/' + pressBook.filename);
+
+		if (pressBook) {
+			deleteFile('images/' + pressBook.filename);
+		}
 
 		res.status(200).json(updatedFilm);
 	} catch (error) {
@@ -409,7 +415,7 @@ exports.deleteFilm = async (req, res) => {
 			return res.status(404).json({ message: 'Film not found' });
 		}
 
-		const imageKeys = getImageKeysFromFilm(film);
+		const imageKeys = getImageKeysFromEntity(film);
 		const deletePromises = imageKeys.map((imageKey) =>
 			deleteImageFromS3(imageKey)
 		);

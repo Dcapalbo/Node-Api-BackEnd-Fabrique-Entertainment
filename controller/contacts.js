@@ -6,9 +6,9 @@ const Contact = require('../model/contact');
 const {
 	uploadFile,
 	getImageUrlFromS3,
-	getImageKeysFromFilm,
 	deleteImageFromS3,
 	findImageKey,
+	getImageKeysFromEntity,
 } = require('../s3Config');
 
 // GET => Getting all contacts
@@ -195,12 +195,9 @@ exports.deleteContact = async (req, res) => {
 			return res.status(404).json({ message: 'Contact not found' });
 		}
 
-		const imageKeys = getImageKeysFromFilm(contact);
-		const deletePromises = imageKeys.map((imageKey) =>
-			deleteImageFromS3(imageKey)
-		);
+		const imageKey = getImageKeysFromEntity(contact);
 
-		await Promise.all(deletePromises);
+		await deleteImageFromS3(imageKey);
 		await Contact.findByIdAndRemove(contactId);
 
 		res.status(200).json({

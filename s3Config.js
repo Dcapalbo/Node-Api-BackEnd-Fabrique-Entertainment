@@ -82,7 +82,7 @@ const findImageKey = async (imageKey) => {
 	});
 };
 
-const getImageKeysFromFilm = (film) => {
+const getImageKeysFromEntity = (film) => {
 	const imageKeys = [];
 	if (film.coverImageKey) {
 		imageKeys.push(film.coverImageKey);
@@ -96,7 +96,7 @@ const getImageKeysFromFilm = (film) => {
 module.exports = {
 	uploadFile,
 	getImageUrlFromS3,
-	getImageKeysFromFilm,
+	getImageKeysFromEntity,
 	deleteImageFromS3,
 	findImageKey,
 };
