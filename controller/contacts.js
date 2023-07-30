@@ -100,8 +100,6 @@ exports.addContact = async (req, res) => {
 
 // PUT => Editing a contact
 exports.editContact = async (req, res) => {
-	let contactImageKey = req.body.contactImageKey;
-
 	const { name, surname, role, bio, email, slug, phoneNumber, _id } = req.body;
 
 	if (!_id) {
@@ -111,28 +109,16 @@ exports.editContact = async (req, res) => {
 		});
 	}
 
+	let contactImageKey;
 	let contactImage;
+
+	if (req.body.contactImage) {
+		contactImageKey = req.body.contactImage;
+	}
 
 	if (req.files.length > 0) {
 		contactImage = req.files.find((file) => file.fieldname === 'contactImage');
 		contactImageKey = `contacts/${name}/profilePicture/${contactImage.originalname}`;
-
-		const presentContact = await Contact.findById(_id);
-
-		if (
-			presentContact?.contactImageKey !== undefined &&
-			presentContact?.contactImageKey !== null &&
-			presentContact?.contactImageKey !== contactImageKey
-		) {
-			const findCoverImageS3 = await findImageKey(
-				presentContact.contactImageKey
-			);
-			if (findCoverImageS3) {
-				await deleteImageFromS3(presentContact.contactImageKey);
-				await uploadFile(contactImage, contactImageKey);
-			}
-		}
-
 		await uploadFile(contactImage, contactImageKey);
 	}
 
@@ -174,13 +160,16 @@ exports.editContact = async (req, res) => {
 			new: true,
 		});
 
-		deleteFile('images/' + contactImage.filename);
+		if (contactImage) {
+			deleteFile('images/' + contactImage.filename);
+		}
 
-		res.status(200).json(updatedContact);
+		res.status(200).send(updatedContact);
 	} catch (error) {
-		res
-			.status(500)
-			.json({ message: 'Was not possible to update the specific contact.' });
+		res.status(500).json({
+			message: 'Was not possible to update the specific contact.',
+			error,
+		});
 	}
 };
 
