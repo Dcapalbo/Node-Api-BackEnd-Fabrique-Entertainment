@@ -354,11 +354,11 @@ router.put(
 			coProductions.forEach((coProduction, index) => {
 				const { coProductionName } = coProduction;
 
-				if (coProductionName.length < 10 || coProductionName.length > 40) {
+				if (coProductionName.length < 6 || coProductionName.length > 40) {
 					throw new Error(
 						`Il nome della co-produzione ${
 							index + 1
-						} deve contenere almeno 10 caratteri e non più di 40`
+						} deve contenere almeno 6 caratteri e non più di 40`
 					);
 				}
 			});

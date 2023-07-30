@@ -16,9 +16,8 @@ const s3 = new S3({
 });
 
 const uploadFile = (file, fileKey) => {
-	// Utilizza path.join per costruire il percorso del file utilizzando il separatore di directory di Unix
-	const filePath = path.join('images', file.filename);
-	const fileStream = fs.createReadStream(filePath);
+	console.log('ecco il mio filename', file.filename);
+	const fileStream = fs.createReadStream(file.path);
 
 	const uploadParams = {
 		Bucket: bucketName,
@@ -49,6 +48,7 @@ const getImageUrlFromS3 = async (imageKey) => {
 };
 
 const deleteImageFromS3 = (imageKey) => {
+	console.log('dentro deleteImageFromS3', imageKey);
 	const params = {
 		Bucket: bucketName,
 		Key: imageKey,
@@ -82,14 +82,21 @@ const findImageKey = async (imageKey) => {
 	});
 };
 
-const getImageKeysFromEntity = (film) => {
-	const imageKeys = [];
-	if (film.coverImageKey) {
-		imageKeys.push(film.coverImageKey);
+const getImageKeysFromEntity = (entity) => {
+	let imageKeys;
+
+	if (entity.coverImageKey) {
+		imageKeys.push(entity.coverImageKey);
 	}
-	if (film.pressBookPdfKey) {
-		imageKeys.push(film.pressBookPdfKey);
+
+	if (entity.pressBookPdfKey) {
+		imageKeys.push(entity.pressBookPdfKey);
 	}
+
+	if (entity.contactImageKey) {
+		imageKeys = entity.contactImageKey;
+	}
+
 	return imageKeys;
 };
 

@@ -195,9 +195,9 @@ exports.deleteContact = async (req, res) => {
 			return res.status(404).json({ message: 'Contact not found' });
 		}
 
-		const imageKey = getImageKeysFromEntity(contact);
+		const contactImageKey = getImageKeysFromEntity(contact);
 
-		await deleteImageFromS3(imageKey);
+		await deleteImageFromS3(contactImageKey);
 		await Contact.findByIdAndRemove(contactId);
 
 		res.status(200).json({

@@ -207,7 +207,6 @@ exports.addFilm = async (req, res) => {
 // PUT => Editing a product
 exports.editFilm = async (req, res) => {
 	let coverImageKey = req.body.coverImageKey;
-	let pressBookPdfKey = req.body.pressBookPdfKey;
 
 	const {
 		title,
@@ -254,18 +253,13 @@ exports.editFilm = async (req, res) => {
 		});
 	}
 
+	let cover;
+
 	if (req.files.length > 0) {
-		let pressBook, cover;
+		const cover = req.files.find((file) => file.fieldname === 'coverImage');
+		const coverImageKey = `films/${title}/cover/${cover.originalname}`;
 
-		cover = req.files.find((file) => file.fieldname === 'coverImage');
-		coverImageKey = `films/${title}/cover/${cover.originalname}`;
-
-		if (req.files.find((file) => file.fieldname === 'pressBookPdf')) {
-			pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
-			pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
-		}
-
-		const presentFilm = await film.findById(_id);
+		const presentFilm = await Film.findById(_id);
 
 		if (
 			presentFilm?.coverImageKey !== undefined &&
@@ -279,22 +273,7 @@ exports.editFilm = async (req, res) => {
 			}
 		}
 
-		if (
-			presentFilm?.pressBookPdfKey !== undefined &&
-			presentFilm?.pressBookPdfKey !== null &&
-			presentFilm?.pressBookPdfKey !== pressBookPdfKey
-		) {
-			const findPressBookPdfS3 = await findImageKey(
-				presentFilm.pressBookPdfKey
-			);
-			if (findPressBookPdfS3) {
-				await deleteImageFromS3(presentFilm.pressBookPdfKey);
-				await uploadFile(pressBook, presentFilm.pressBookPdfKey);
-			}
-		}
-
 		await uploadFile(cover, coverImageKey);
-		await uploadFile(pressBook, pressBookPdfKey);
 	}
 
 	const update = {
@@ -325,15 +304,14 @@ exports.editFilm = async (req, res) => {
 		productionNotes,
 		duration,
 		year,
-		festivals: festivals ?? null,
+		festivals,
 		slug,
 		type,
-		trailer: trailer ?? null,
-		imdb: imdb ?? null,
-		instagram: instagram ?? null,
-		facebook: facebook ?? null,
+		trailer,
+		imdb,
+		instagram,
+		facebook,
 		coverImageKey,
-		pressBookPdfKey,
 	};
 
 	const errors = validationResult(req);
@@ -376,14 +354,13 @@ exports.editFilm = async (req, res) => {
 				imdb: imdb ?? null,
 				instagram: instagram ?? null,
 				facebook: facebook ?? null,
-				coverImageKey,
-				pressBookPdfKey,
 			},
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,
 			validationErrors: errors.array(),
 		});
 	}
+
 	try {
 		const updatedFilm = await Film.findByIdAndUpdate(_id, update, {
 			new: true,
@@ -391,16 +368,14 @@ exports.editFilm = async (req, res) => {
 
 		deleteFile('images/' + cover.filename);
 
-		if (pressBook) {
-			deleteFile('images/' + pressBook.filename);
-		}
-
 		res.status(200).json(updatedFilm);
 	} catch (error) {
-		res.status(500).json({
-			message: 'Was not possible to update the specific film.',
-			error,
-		});
+		res
+			.status(500)
+			.json({
+				message: 'Was not possible to update the specific film.',
+				error,
+			});
 	}
 };
 
@@ -416,6 +391,7 @@ exports.deleteFilm = async (req, res) => {
 		}
 
 		const imageKeys = getImageKeysFromEntity(film);
+
 		const deletePromises = imageKeys.map((imageKey) =>
 			deleteImageFromS3(imageKey)
 		);
