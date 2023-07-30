@@ -75,6 +75,7 @@ exports.addContact = async (req, res) => {
 		const contactImage = req.files.find(
 			(file) => file.fieldname === 'contactImage'
 		);
+
 		const contactImageKey = `contacts/${name}/profilePicture/${contactImage.originalname}`;
 
 		await uploadFile(contactImage, contactImageKey);

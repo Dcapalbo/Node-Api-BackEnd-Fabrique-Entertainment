@@ -1,5 +1,6 @@
 /** @format */
 const S3 = require('aws-sdk/clients/s3');
+const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 
@@ -15,7 +16,9 @@ const s3 = new S3({
 });
 
 const uploadFile = (file, fileKey) => {
-	const fileStream = fs.createReadStream(file.path);
+	// Utilizza path.join per costruire il percorso del file utilizzando il separatore di directory di Unix
+	const filePath = path.join('images', file.filename);
+	const fileStream = fs.createReadStream(filePath);
 
 	const uploadParams = {
 		Bucket: bucketName,
