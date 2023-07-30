@@ -36,6 +36,7 @@ const getImageUrlFromS3 = async (imageKey) => {
 	return new Promise((resolve, reject) => {
 		s3.getSignedUrl('getObject', params, (err, url) => {
 			if (err) {
+				console.log(err);
 				reject(err);
 			} else {
 				resolve(url);
