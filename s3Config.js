@@ -48,7 +48,6 @@ const getImageUrlFromS3 = async (imageKey) => {
 };
 
 const deleteImageFromS3 = (imageKey) => {
-	console.log('dentro deleteImageFromS3', imageKey);
 	const params = {
 		Bucket: bucketName,
 		Key: imageKey,
@@ -65,35 +64,15 @@ const deleteImageFromS3 = (imageKey) => {
 	});
 };
 
-const findImageKey = async (imageKey) => {
-	const params = {
-		Bucket: bucketName,
-		Key: imageKey,
-	};
-
-	return new Promise((resolve, reject) => {
-		s3.headObject(params, (err, data) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(data);
-			}
-		});
-	});
-};
-
 const getImageKeysFromEntity = (entity) => {
-	let imageKeys;
+	let imageKeys = [];
 
 	if (entity.coverImageKey) {
 		imageKeys.push(entity.coverImageKey);
-	}
-
-	if (entity.pressBookPdfKey) {
-		imageKeys.push(entity.pressBookPdfKey);
-	}
-
-	if (entity.contactImageKey) {
+		if (entity.pressBookPdfKey) {
+			imageKeys.push(entity.pressBookPdfKey);
+		}
+	} else {
 		imageKeys = entity.contactImageKey;
 	}
 
@@ -105,5 +84,4 @@ module.exports = {
 	getImageUrlFromS3,
 	getImageKeysFromEntity,
 	deleteImageFromS3,
-	findImageKey,
 };

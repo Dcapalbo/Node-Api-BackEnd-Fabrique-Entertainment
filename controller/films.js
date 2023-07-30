@@ -7,7 +7,6 @@ const {
 	uploadFile,
 	getImageUrlFromS3,
 	deleteImageFromS3,
-	findImageKey,
 	getImageKeysFromEntity,
 } = require('../s3Config');
 const film = require('../model/film');
@@ -206,8 +205,6 @@ exports.addFilm = async (req, res) => {
 
 // PUT => Editing a product
 exports.editFilm = async (req, res) => {
-	let coverImageKey = req.body.coverImageKey;
-
 	const {
 		title,
 		director,
@@ -253,27 +250,29 @@ exports.editFilm = async (req, res) => {
 		});
 	}
 
-	let cover;
+	let coverImageKey, cover;
 
-	if (req.files.length > 0) {
-		const cover = req.files.find((file) => file.fieldname === 'coverImage');
-		const coverImageKey = `films/${title}/cover/${cover.originalname}`;
+	if (req.body.coverImage) {
+		coverImageKey = req.body.coverImage;
+	}
 
-		const presentFilm = await Film.findById(_id);
-
-		if (
-			presentFilm?.coverImageKey !== undefined &&
-			presentFilm?.coverImageKey !== null &&
-			presentFilm?.coverImageKey !== coverImageKey
-		) {
-			const findCoverImageS3 = await findImageKey(presentFilm.coverImageKey);
-			if (findCoverImageS3) {
-				await deleteImageFromS3(presentFilm.coverImageKey);
-				await uploadFile(cover, coverImageKey);
-			}
-		}
-
+	if (req.files.find((file) => file.fieldname === 'coverImage')) {
+		cover = req.files.find((file) => file.fieldname === 'coverImage');
+		coverImageKey = `films/${title}/cover/${cover.originalname}`;
 		await uploadFile(cover, coverImageKey);
+	}
+
+	let pressBook;
+	let pressBookPdfKey;
+
+	if (req.body.pressBook) {
+		pressBookPdfKey = req.body.pressBook;
+	}
+
+	if (req.files.find((file) => file.fieldname === 'pressBookPdf')) {
+		pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
+		pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
+		await uploadFile(pressBook, pressBookPdfKey);
 	}
 
 	const update = {
@@ -312,6 +311,7 @@ exports.editFilm = async (req, res) => {
 		instagram,
 		facebook,
 		coverImageKey,
+		pressBookPdfKey,
 	};
 
 	const errors = validationResult(req);
@@ -366,16 +366,20 @@ exports.editFilm = async (req, res) => {
 			new: true,
 		});
 
-		deleteFile('images/' + cover.filename);
+		if (cover) {
+			deleteFile('images/' + cover.filename);
+		}
 
-		res.status(200).json(updatedFilm);
+		if (pressBook) {
+			deleteFile('images/' + pressBook.filename);
+		}
+
+		res.status(200).send(updatedFilm);
 	} catch (error) {
-		res
-			.status(500)
-			.json({
-				message: 'Was not possible to update the specific film.',
-				error,
-			});
+		res.status(500).json({
+			message: 'Was not possible to update the specific film.',
+			error,
+		});
 	}
 };
 
@@ -391,7 +395,6 @@ exports.deleteFilm = async (req, res) => {
 		}
 
 		const imageKeys = getImageKeysFromEntity(film);
-
 		const deletePromises = imageKeys.map((imageKey) =>
 			deleteImageFromS3(imageKey)
 		);

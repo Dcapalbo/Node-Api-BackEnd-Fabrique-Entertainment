@@ -7,7 +7,6 @@ const {
 	uploadFile,
 	getImageUrlFromS3,
 	deleteImageFromS3,
-	findImageKey,
 	getImageKeysFromEntity,
 } = require('../s3Config');
 
