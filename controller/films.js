@@ -192,9 +192,6 @@ exports.addFilm = async (req, res) => {
 			pressBookPdfKey,
 		});
 
-		deleteFile('images/' + cover.filename);
-		deleteFile('images/' + pressBook.filename);
-
 		return res.status(201).send(film);
 	} catch (error) {
 		return res.status(500).json({ message: 'Something went wrong.', error });
