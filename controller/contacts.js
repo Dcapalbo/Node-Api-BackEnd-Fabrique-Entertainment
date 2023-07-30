@@ -51,7 +51,6 @@ exports.addContact = async (req, res) => {
 	// if there are errors
 	// Send a response with the status and a json
 	if (!errors.isEmpty()) {
-		console.log('POST adding contacts errors: ', errors.array());
 		res.status(422).json({
 			contact: {
 				name,
@@ -152,7 +151,6 @@ exports.editContact = async (req, res) => {
 	// if there are errors
 	// Send a response with the status and a json
 	if (!errors.isEmpty()) {
-		console.log('POST adding contacts errors: ', errors.array());
 		res.status(422).json({
 			contact: {
 				name,
