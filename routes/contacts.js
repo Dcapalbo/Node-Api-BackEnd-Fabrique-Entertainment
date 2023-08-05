@@ -26,7 +26,7 @@ router.post(
 			.normalizeEmail()
 			.isLength({ min: 10, max: 40 })
 			.trim(),
-		check('phoneNumber').isFloat().isLength({ min: 10, max: 15 }),
+		check('phoneNumber').optional().isFloat().isLength({ min: 10, max: 15 }),
 	],
 	addContact
 );
@@ -43,7 +43,7 @@ router.put(
 			.normalizeEmail()
 			.isLength({ min: 10, max: 40 })
 			.trim(),
-		check('phoneNumber').isFloat().isLength({ min: 10, max: 15 }),
+		check('phoneNumber').optional().isFloat().isLength({ min: 10, max: 15 }),
 	],
 	editContact
 );

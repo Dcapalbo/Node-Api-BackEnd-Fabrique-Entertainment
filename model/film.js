@@ -43,6 +43,20 @@ const filmSchema = new Schema({
 			},
 		},
 	],
+	collaborations: [
+		{
+			collaborationName: {
+				type: String,
+			},
+		},
+	],
+	contributes: [
+		{
+			contributeName: {
+				type: String,
+			},
+		},
+	],
 	actors: [
 		{
 			actorName: {
@@ -75,6 +89,10 @@ const filmSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	projectState: {
+		type: String,
+		required: true,
+	},
 	directorOfPhotography: {
 		type: String,
 		required: true,
@@ -85,11 +103,9 @@ const filmSchema = new Schema({
 	},
 	scenography: {
 		type: String,
-		required: true,
 	},
 	costumes: {
 		type: String,
-		required: true,
 	},
 	music: {
 		type: String,
@@ -101,15 +117,12 @@ const filmSchema = new Schema({
 	},
 	soundDesign: {
 		type: String,
-		required: true,
 	},
 	casting: {
 		type: String,
-		required: true,
 	},
 	lineProducer: {
 		type: String,
-		required: true,
 	},
 	executiveProducers: [
 		{
@@ -127,13 +140,15 @@ const filmSchema = new Schema({
 	},
 	firstAssistantDirector: {
 		type: String,
-		required: true,
 	},
 	synopsis: {
 		type: String,
 		required: true,
 	},
 	productionNotes: {
+		type: String,
+	},
+	directorNotes: {
 		type: String,
 	},
 	duration: {

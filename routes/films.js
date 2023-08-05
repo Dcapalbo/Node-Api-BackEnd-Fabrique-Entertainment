@@ -102,6 +102,44 @@ router.post(
 
 			return true;
 		}),
+		check('collaborations').custom((collaborations) => {
+			if (!collaborations || collaborations.length === 0) {
+				return true;
+			}
+
+			collaborations.forEach((collaboration, index) => {
+				const { collaborationName } = collaboration;
+
+				if (collaborationName.length < 6 || collaborationName.length > 40) {
+					throw new Error(
+						`Il nome della collaborazione ${
+							index + 1
+						} deve contenere almeno 6 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
+		check('contributes').custom((contributes) => {
+			if (!contributes || contributes.length === 0) {
+				return true;
+			}
+
+			contributes.forEach((contribute, index) => {
+				const { contributeName } = contribute;
+
+				if (contributeName.length < 6 || contributeName.length > 40) {
+					throw new Error(
+						`Il nome del contributo ${
+							index + 1
+						} deve contenere almeno 6 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
 		check('actors')
 			.isArray({ min: 1 })
 			.withMessage(
@@ -179,18 +217,35 @@ router.post(
 				return true;
 			}),
 		check('genre').isString().trim(),
+		check('projectState').isString().trim(),
 		check('directorOfPhotography')
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('editing').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('scenography').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('costumes').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('scenography')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('costumes')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
 		check('music').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('sound').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('soundDesign').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('casting').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('lineProducer').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('soundDesign')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('casting').optional().isString().isLength({ min: 6, max: 40 }).trim(),
+		check('lineProducer')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
 		check('executiveProducers')
 			.isArray({ min: 1 })
 			.withMessage('Deve essere presente almeno 1 produttore esecutivo')
@@ -223,11 +278,17 @@ router.post(
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('firstAssistantDirector')
+			.optional()
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
 		check('productionNotes')
+			.optional()
+			.isString()
+			.isLength({ min: 10, max: 300 })
+			.trim(),
+		check('directorNotes')
 			.optional()
 			.isString()
 			.isLength({ min: 10, max: 300 })
@@ -384,6 +445,44 @@ router.put(
 
 			return true;
 		}),
+		check('collaborations').custom((collaborations) => {
+			if (!collaborations || collaborations.length === 0) {
+				return true;
+			}
+
+			collaborations.forEach((collaboration, index) => {
+				const { collaborationName } = collaboration;
+
+				if (collaborationName.length < 6 || collaborationName.length > 40) {
+					throw new Error(
+						`Il nome della collaborazione ${
+							index + 1
+						} deve contenere almeno 6 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
+		check('contributes').custom((contributes) => {
+			if (!contributes || contributes.length === 0) {
+				return true;
+			}
+
+			contributes.forEach((contribute, index) => {
+				const { contributeName } = contribute;
+
+				if (contributeName.length < 6 || contributeName.length > 40) {
+					throw new Error(
+						`Il nome del contributo ${
+							index + 1
+						} deve contenere almeno 6 caratteri e non più di 40`
+					);
+				}
+			});
+
+			return true;
+		}),
 		check('actors')
 			.isArray({ min: 1 })
 			.withMessage(
@@ -395,12 +494,12 @@ router.put(
 
 					if (
 						!actorName ||
-						(actorName.trim().length < 6 && actorName.trim().length > 40)
+						(actorName.trim().length < 3 && actorName.trim().length > 40)
 					) {
 						throw new Error(
 							`Il nome dell'attore ${
 								index + 1
-							} deve contenere almeno 6 caratteri e non più di 40`
+							} deve contenere almeno 3 caratteri e non più di 40`
 						);
 					}
 
@@ -412,6 +511,28 @@ router.put(
 							`Il ruolo dell'attore ${
 								index + 1
 							} deve contenere almeno 3 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('subjects')
+			.isArray({ min: 1 })
+			.withMessage(
+				"L'elenco degli scrittori del soggetto deve contenere almeno un nome"
+			)
+			.custom((subjects) => {
+				subjects.forEach((subject, index) => {
+					const { subjectName } = subject;
+
+					if (
+						!subjectName ||
+						(subjectName.trim().length < 6 && subjectName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome dello scritore del soggetto ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
 						);
 					}
 				});
@@ -439,23 +560,38 @@ router.put(
 				return true;
 			}),
 		check('genre').isString().trim(),
+		check('projectState').isString().trim(),
 		check('directorOfPhotography')
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('editing').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('scenography').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('costumes').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('scenography')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('costumes')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
 		check('music').isString().isLength({ min: 6, max: 40 }).trim(),
 		check('sound').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('soundDesign').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('casting').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('lineProducer').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('soundDesign')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
+		check('casting').optional().isString().isLength({ min: 6, max: 40 }).trim(),
+		check('lineProducer')
+			.optional()
+			.isString()
+			.isLength({ min: 6, max: 40 })
+			.trim(),
 		check('executiveProducers')
 			.isArray({ min: 1 })
-			.withMessage(
-				"L'elenco delle produzioni deve contenere almeno una società di produzione"
-			)
+			.withMessage('Deve essere presente almeno 1 produttore esecutivo')
 			.custom((executiveProducers) => {
 				executiveProducers.forEach((executiveProducer, index) => {
 					const { executiveProducerName } = executiveProducer;
@@ -485,11 +621,17 @@ router.put(
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('firstAssistantDirector')
+			.optional()
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
 		check('synopsis').isString().isLength({ min: 10, max: 300 }).trim(),
 		check('productionNotes')
+			.optional()
+			.isString()
+			.isLength({ min: 10, max: 300 })
+			.trim(),
+		check('directorNotes')
 			.optional()
 			.isString()
 			.isLength({ min: 10, max: 300 })

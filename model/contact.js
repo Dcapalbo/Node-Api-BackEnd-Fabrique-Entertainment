@@ -27,7 +27,6 @@ const contactSchema = new Schema({
 	},
 	phoneNumber: {
 		type: Number,
-		required: true,
 	},
 	slug: {
 		type: String,

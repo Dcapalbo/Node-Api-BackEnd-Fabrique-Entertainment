@@ -58,7 +58,7 @@ exports.addContact = async (req, res) => {
 				bio,
 				email,
 				slug,
-				phoneNumber,
+				phoneNumber: phoneNumber ?? null,
 			},
 			message: 'There was a problem with the validation process',
 			errorMessage: errors.array()[0].msg,
@@ -85,7 +85,7 @@ exports.addContact = async (req, res) => {
 			bio,
 			email,
 			slug,
-			phoneNumber,
+			phoneNumber: phoneNumber ?? null,
 			contactImageKey,
 		});
 
@@ -128,7 +128,7 @@ exports.editContact = async (req, res) => {
 		bio,
 		email,
 		slug,
-		phoneNumber,
+		phoneNumber: phoneNumber === undefined ? null : phoneNumber,
 		contactImageKey,
 	};
 
@@ -144,7 +144,7 @@ exports.editContact = async (req, res) => {
 				bio,
 				email,
 				slug,
-				phoneNumber,
+				phoneNumber: phoneNumber === undefined ? null : phoneNumber,
 				_id,
 				contactImageKey,
 			},
