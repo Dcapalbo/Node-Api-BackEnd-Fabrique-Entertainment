@@ -282,16 +282,16 @@ router.post(
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
-		check('synopsis').isString().isLength({ min: 10, max: 1500 }).trim(),
+		check('synopsis').isString().isLength({ min: 10, max: 5000 }).trim(),
 		check('productionNotes')
 			.optional()
 			.isString()
-			.isLength({ min: 10, max: 1500 })
+			.isLength({ min: 10, max: 5000 })
 			.trim(),
 		check('directorNotes')
 			.optional()
 			.isString()
-			.isLength({ min: 10, max: 1500 })
+			.isLength({ min: 10, max: 5000 })
 			.trim(),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
@@ -625,16 +625,16 @@ router.put(
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
-		check('synopsis').isString().isLength({ min: 10, max: 1500 }).trim(),
+		check('synopsis').isString().isLength({ min: 10, max: 5000 }).trim(),
 		check('productionNotes')
 			.optional()
 			.isString()
-			.isLength({ min: 10, max: 1500 })
+			.isLength({ min: 10, max: 5000 })
 			.trim(),
 		check('directorNotes')
 			.optional()
 			.isString()
-			.isLength({ min: 10, max: 1500 })
+			.isLength({ min: 10, max: 5000 })
 			.trim(),
 		check('duration').isFloat().isLength({ min: 1, max: 3 }),
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
