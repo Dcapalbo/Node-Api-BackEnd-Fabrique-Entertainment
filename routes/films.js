@@ -233,8 +233,27 @@ router.post(
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
-		check('music').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('sound').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('musics')
+			.isArray({ min: 1 })
+			.withMessage("L'elenco dei musicisti deve contenere almeno un nome")
+			.custom((musics) => {
+				musics.forEach((music, index) => {
+					const { musicName } = music;
+
+					if (
+						!musicName ||
+						(musicName.trim().length < 6 && musicName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome del musicista ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('sound').optional().isString().isLength({ min: 6, max: 40 }).trim(),
 		check('soundDesign')
 			.optional()
 			.isString()
@@ -576,8 +595,27 @@ router.put(
 			.isString()
 			.isLength({ min: 6, max: 40 })
 			.trim(),
-		check('music').isString().isLength({ min: 6, max: 40 }).trim(),
-		check('sound').isString().isLength({ min: 6, max: 40 }).trim(),
+		check('musics')
+			.isArray({ min: 1 })
+			.withMessage("L'elenco dei musicisti deve contenere almeno un nome")
+			.custom((musics) => {
+				musics.forEach((music, index) => {
+					const { musicName } = music;
+
+					if (
+						!musicName ||
+						(musicName.trim().length < 6 && musicName.trim().length > 40)
+					) {
+						throw new Error(
+							`Il nome del musicista ${
+								index + 1
+							} deve contenere almeno 6 caratteri e non più di 40`
+						);
+					}
+				});
+				return true;
+			}),
+		check('sound').optional().isString().isLength({ min: 6, max: 40 }).trim(),
 		check('soundDesign')
 			.optional()
 			.isString()

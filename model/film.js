@@ -107,10 +107,14 @@ const filmSchema = new Schema({
 	costumes: {
 		type: String,
 	},
-	music: {
-		type: String,
-		required: true,
-	},
+	musics: [
+		{
+			musicName: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 	sound: {
 		type: String,
 		required: true,
