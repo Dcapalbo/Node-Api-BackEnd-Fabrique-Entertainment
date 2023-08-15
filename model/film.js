@@ -168,6 +168,19 @@ const filmSchema = new Schema({
 			festivalName: {
 				type: String,
 			},
+			festivalType: {
+				type: String,
+			},
+			festivalRoles: [
+				{
+					festivalRoleName: {
+						type: String,
+					},
+					festivalPersonName: {
+						type: String,
+					},
+				},
+			],
 		},
 	],
 	type: {

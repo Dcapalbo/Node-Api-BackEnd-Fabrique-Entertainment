@@ -316,19 +316,53 @@ router.post(
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
 			if (!festivals || festivals.length === 0) {
-				return true;
+				throw new Error('Festivals array is required');
 			}
 
 			festivals.forEach((festival, index) => {
-				const { festivalName } = festival;
-				if (festivalName.length < 10 || festivalName.length > 80) {
+				const { festivalName, festivalType, festivalRoles } = festival;
+
+				if (
+					!festivalName ||
+					festivalName.length < 10 ||
+					festivalName.length > 80
+				) {
 					throw new Error(
-						`Il nome del festival ${
-							index + 1
-						} deve contenere almeno 10 caratteri e non più di 80`
+						`Festival name at index ${index} must be between 10 and 80 characters`
 					);
 				}
+
+				if (!festivalType) {
+					throw new Error(`Festival type at index ${index} is required`);
+				}
+
+				if (festivalRoles) {
+					festivalRoles.forEach((role, roleIndex) => {
+						const { festivalRoleName, festivalPersonName } = role;
+
+						if (
+							!festivalRoleName ||
+							festivalRoleName.length < 6 ||
+							festivalRoleName.length > 40
+						) {
+							throw new Error(
+								`Festival role name at index ${roleIndex} must be between 6 and 40 characters`
+							);
+						}
+
+						if (
+							!festivalPersonName ||
+							festivalPersonName.length < 6 ||
+							festivalPersonName.length > 40
+						) {
+							throw new Error(
+								`Festival person name at index ${roleIndex} must be between 6 and 40 characters`
+							);
+						}
+					});
+				}
 			});
+
 			return true;
 		}),
 		check('type').isString().trim(),
@@ -678,19 +712,53 @@ router.put(
 		check('year').isFloat().isLength({ min: 4, max: 4 }),
 		check('festivals').custom((festivals) => {
 			if (!festivals || festivals.length === 0) {
-				return true;
+				throw new Error('Festivals array is required');
 			}
 
 			festivals.forEach((festival, index) => {
-				const { festivalName } = festival;
-				if (festivalName.length < 10 || festivalName.length > 80) {
+				const { festivalName, festivalType, festivalRoles } = festival;
+
+				if (
+					!festivalName ||
+					festivalName.length < 10 ||
+					festivalName.length > 80
+				) {
 					throw new Error(
-						`Il nome del festival ${
-							index + 1
-						} deve contenere almeno 10 caratteri e non più di 80`
+						`Festival name at index ${index} must be between 10 and 80 characters`
 					);
 				}
+
+				if (!festivalType) {
+					throw new Error(`Festival type at index ${index} is required`);
+				}
+
+				if (festivalRoles) {
+					festivalRoles.forEach((role, roleIndex) => {
+						const { festivalRoleName, festivalPersonName } = role;
+
+						if (
+							!festivalRoleName ||
+							festivalRoleName.length < 6 ||
+							festivalRoleName.length > 40
+						) {
+							throw new Error(
+								`Festival role name at index ${roleIndex} must be between 6 and 40 characters`
+							);
+						}
+
+						if (
+							!festivalPersonName ||
+							festivalPersonName.length < 6 ||
+							festivalPersonName.length > 40
+						) {
+							throw new Error(
+								`Festival person name at index ${roleIndex} must be between 6 and 40 characters`
+							);
+						}
+					});
+				}
 			});
+
 			return true;
 		}),
 		check('type').isString().trim(),
