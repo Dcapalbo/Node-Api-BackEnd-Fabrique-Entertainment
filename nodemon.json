@@ -10,7 +10,7 @@
 		"JWT_SECRET": "secret1992_25_03",
 		"JWT_RESET_SECRET": "secret2023_04_19",
 		"RESET_PASSWORD_SECRET": "secret2017_05_03",
-		"CLIENT_URL": "http://localhost:3000"
+		"CLIENT_PRODUCTION_URL": "https://www.fabriquentertainment.com"
 	},
 	"watch": ["app.js"],
 	"ext": "js"

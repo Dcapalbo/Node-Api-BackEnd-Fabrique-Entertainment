@@ -131,7 +131,7 @@ exports.forgotPassword = async (req, res) => {
 			to: email,
 			subject: 'Fabrique entertainment link per il reset della password',
 			html: `<h2>Questo link ha validità di 5 minuti, per favore clicca sul link qui sotto per resettare la tua password,</h2>
-            <a href="${process.env.CLIENT_URL}/reset-password?token=${token}">${token}</a>
+            <a href="${process.env.CLIENT_PRODUCTION_URL}/reset-password?token=${token}">${token}</a>
         `,
 		};
 
