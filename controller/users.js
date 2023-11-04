@@ -135,11 +135,14 @@ exports.forgotPassword = async (req, res) => {
         `,
 		};
 
-		await User.updateOne({ resetLink: token });
+		await User.updateOne({ email: existingUser.email }, { resetLink: token });
+
 		transporter.sendMail(automaticEmailData, (err, info) => {
 			if (err) {
 				console.log('Here my reset password error: ', err);
-				return;
+				return res.status(500).json({
+					message: 'An error occurred while sending the reset link',
+				});
 			}
 			return res.status(201).json({
 				message:
@@ -147,9 +150,9 @@ exports.forgotPassword = async (req, res) => {
 			});
 		});
 	} catch (error) {
-		return res
-			.status(403)
-			.json({ message: 'Was not possible to reset the password' });
+		return res.status(500).json({
+			message: 'Was not possible to send the link for the password reset',
+		});
 	}
 };
 
