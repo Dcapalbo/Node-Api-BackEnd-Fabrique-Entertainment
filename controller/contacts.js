@@ -31,9 +31,7 @@ exports.getContacts = async (req, res) => {
 				};
 			})
 		);
-		return res
-			.status(200)
-			.send(contactsWithImages ? contactsWithImages : contacts);
+		return res.status(200).send(contactsWithImages ?? contacts);
 	} catch (error) {
 		return res.status(404).json({
 			message: 'Something went wrong with the contacts fetching',
@@ -108,6 +106,28 @@ exports.editContact = async (req, res) => {
 		});
 	}
 
+	const errors = validationResult(req);
+	// if there are errors
+	// Send a response with the status and a json
+	if (!errors.isEmpty()) {
+		res.status(422).json({
+			contact: {
+				name,
+				surname,
+				role,
+				bio,
+				email,
+				slug,
+				phoneNumber: phoneNumber === undefined ? null : phoneNumber,
+				_id,
+				contactImageKey,
+			},
+			message: 'There was a problem with the validation process',
+			errorMessage: errors.array()[0].msg,
+			validationErrors: errors.array(),
+		});
+	}
+
 	let contactImageKey;
 	let contactImage;
 
@@ -132,28 +152,6 @@ exports.editContact = async (req, res) => {
 		contactImageKey,
 	};
 
-	const errors = validationResult(req);
-	// if there are errors
-	// Send a response with the status and a json
-	if (!errors.isEmpty()) {
-		res.status(422).json({
-			contact: {
-				name,
-				surname,
-				role,
-				bio,
-				email,
-				slug,
-				phoneNumber: phoneNumber === undefined ? null : phoneNumber,
-				_id,
-				contactImageKey,
-			},
-			message: 'There was a problem with the validation process',
-			errorMessage: errors.array()[0].msg,
-			validationErrors: errors.array(),
-		});
-	}
-
 	try {
 		const updatedContact = await Contact.findByIdAndUpdate(_id, update, {
 			new: true,
@@ -163,7 +161,7 @@ exports.editContact = async (req, res) => {
 			deleteFile('images/' + contactImage.filename);
 		}
 
-		res.status(200).send(updatedContact);
+		return res.status(200).send(updatedContact);
 	} catch (error) {
 		res.status(500).json({
 			message: 'Was not possible to update the specific contact.',

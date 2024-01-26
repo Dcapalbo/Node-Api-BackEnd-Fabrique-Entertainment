@@ -259,8 +259,6 @@ exports.editFilm = async (req, res) => {
 		_id,
 	} = req.body;
 
-	console.log(req.body);
-
 	if (!_id) {
 		res.status(404).json({
 			message:
