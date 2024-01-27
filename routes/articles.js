@@ -20,6 +20,7 @@ router.post(
 		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
 		check('date').isDate(),
 		check('tag').isString().isLength({ min: 5, max: 30 }).trim(),
+		check('description').isString().isLength({ min: 10, max: 5000 }).trim(),
 		check('link')
 			.isURL({
 				protocols: ['http', 'https'],
@@ -39,6 +40,7 @@ router.put(
 		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
 		check('date').isDate(),
 		check('tag').isString().isLength({ min: 5, max: 30 }).trim(),
+		check('description').isString().isLength({ min: 10, max: 5000 }).trim(),
 		check('link')
 			.isURL({
 				protocols: ['http', 'https'],

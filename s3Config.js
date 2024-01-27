@@ -1,6 +1,5 @@
 /** @format */
 const S3 = require('aws-sdk/clients/s3');
-const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 
@@ -16,7 +15,6 @@ const s3 = new S3({
 });
 
 const uploadFile = (file, fileKey) => {
-	console.log('ecco il mio filename', file.filename);
 	const fileStream = fs.createReadStream(file.path);
 
 	const uploadParams = {

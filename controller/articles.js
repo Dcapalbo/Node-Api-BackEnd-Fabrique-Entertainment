@@ -41,7 +41,7 @@ exports.getArticles = async (req, res) => {
 
 // POST => create News
 exports.createArticle = async (req, res) => {
-	const { title, date, tag, link } = req.body;
+	const { title, date, tag, description, link } = req.body;
 	// Validate request body using express-validator
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -69,7 +69,13 @@ exports.createArticle = async (req, res) => {
 		const articleImageKey = `articles/${title}/ArticlePicture/${articleImage.originalname}`;
 
 		await uploadFile(articleImage, articleImageKey);
-		const article = await Article.create({ title, date, tag, link });
+		const article = await Article.create({
+			title,
+			date,
+			tag,
+			description,
+			link,
+		});
 		// Return success response with created article
 
 		deleteFile('images/' + articleImage.filename);
@@ -88,7 +94,7 @@ exports.createArticle = async (req, res) => {
 };
 // PUT => edit the article
 exports.editArticle = async (req, res) => {
-	const { title, date, tag, link, _id } = req.body;
+	const { title, date, tag, description, link, _id } = req.body;
 
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -120,7 +126,7 @@ exports.editArticle = async (req, res) => {
 		await uploadFile(articleImage, articleImageKey);
 	}
 
-	const update = { title, date, tag, link, _id };
+	const update = { title, date, tag, description, link, _id };
 
 	try {
 		const updatedArticle = await Article.findByIdAndUpdate(_id, update, {
