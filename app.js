@@ -1,17 +1,21 @@
 /** @format */
 
 require('dotenv').config();
+
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-const filmRoutes = require('./routes/films');
-const contactRoutes = require('./routes/contacts');
-const usersRoutes = require('./routes/users');
 const multer = require('multer');
 const cors = require('cors');
+
+//importing routes
+const articleRoutes = require('./routes/articles');
+const contactRoutes = require('./routes/contacts');
+const usersRoutes = require('./routes/users');
+const filmRoutes = require('./routes/films');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -65,3 +69,4 @@ app.use(cors());
 app.use(filmRoutes);
 app.use(contactRoutes);
 app.use(usersRoutes);
+app.use(articleRoutes);
