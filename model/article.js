@@ -32,4 +32,4 @@ const articleSchema = new Schema({
 });
 
 // / exporting the model and the Schema
-module.exports = mongoose.model('Articles', articleSchema);
+module.exports = mongoose.model('Article', articleSchema);

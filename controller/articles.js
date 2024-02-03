@@ -39,8 +39,8 @@ exports.getArticles = async (req, res) => {
 	}
 };
 
-// POST => create News
-exports.createArticle = async (req, res) => {
+// POST => add Article
+exports.addArticle = async (req, res) => {
 	const { title, date, tag, description, link } = req.body;
 	// Validate request body using express-validator
 	const errors = validationResult(req);
