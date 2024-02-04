@@ -1,6 +1,7 @@
 /** @format */
 
 const { validationResult } = require('express-validator');
+const { deleteFile } = require('../util/functions');
 const Article = require('../model/article');
 const {
 	uploadFile,
@@ -23,11 +24,12 @@ exports.getArticles = async (req, res) => {
 
 				return {
 					...article.toObject(),
-					profileCover: {
+					articleCover: {
 						articleImageUrl,
 						articleImageKey: article.articleImageKey,
 					},
 				};
+
 			})
 		);
 		return res.status(200).send(articlesWithImages ?? articles);
@@ -46,7 +48,7 @@ exports.addArticle = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({
-			article: { title, date, tag, link },
+			article: { title, date, tag, description, link },
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,
 			validationErrors: errors.array(),
@@ -62,19 +64,22 @@ exports.addArticle = async (req, res) => {
 			});
 		}
 		//take the image to match with key for S3 AWS
-		const articleImage = req.filed.find(
+		const articleImage = req.files.find(
 			(file) => file.fieldname === 'articleImage'
 		);
+
 		//create the key to match with image for S3 AWS
-		const articleImageKey = `articles/${title}/ArticlePicture/${articleImage.originalname}`;
+		const articleImageKey = `articles/${title}/articlePicture/${articleImage.originalname}`;
 
 		await uploadFile(articleImage, articleImageKey);
+
 		const article = await Article.create({
 			title,
 			date,
 			tag,
 			description,
 			link,
+			articleImageKey,
 		});
 		// Return success response with created article
 
@@ -99,7 +104,7 @@ exports.editArticle = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({
-			article: { title, date, tag, link, _id },
+			article: { title, date, tag, description, link, _id },
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,
 			validationErrors: errors.array(),
@@ -126,7 +131,7 @@ exports.editArticle = async (req, res) => {
 		await uploadFile(articleImage, articleImageKey);
 	}
 
-	const update = { title, date, tag, description, link, _id };
+	const update = { title, date, tag, description, link, articleImageKey };
 
 	try {
 		const updatedArticle = await Article.findByIdAndUpdate(_id, update, {

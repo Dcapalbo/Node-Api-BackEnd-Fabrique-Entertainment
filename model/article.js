@@ -25,9 +25,8 @@ const articleSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	newsImageKey: {
+	articleImageKey: {
 		type: String,
-		required: true,
 	},
 });
 

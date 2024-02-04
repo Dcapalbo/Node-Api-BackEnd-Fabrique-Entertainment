@@ -18,7 +18,13 @@ router.post(
 	'/add-article',
 	[
 		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
-		check('date').isDate(),
+		check('date').custom((value) => {
+			const date = new Date(value);
+			if (isNaN(date.getTime())) {
+				throw new Error('Data non valida');
+			}
+			return true;
+		}),
 		check('tag').isString().isLength({ min: 5, max: 30 }).trim(),
 		check('description').isString().isLength({ min: 10, max: 5000 }).trim(),
 		check('link')
@@ -38,7 +44,13 @@ router.put(
 	'/update-article',
 	[
 		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
-		check('date').isDate(),
+		check('date').custom((value) => {
+			const date = new Date(value);
+			if (isNaN(date.getTime())) {
+				throw new Error('Data non valida');
+			}
+			return true;
+		}),
 		check('tag').isString().isLength({ min: 5, max: 30 }).trim(),
 		check('description').isString().isLength({ min: 10, max: 5000 }).trim(),
 		check('link')
