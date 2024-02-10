@@ -13,7 +13,7 @@ const {
 // GET => Getting all articles
 exports.getArticles = async (req, res) => {
 	try {
-		const articles = await Article.find();
+		const articles = await Article.find().sort({ date: 1 });
 		const articlesWithImages = await Promise.all(
 			articles.map(async (article) => {
 				let articleImageUrl;
@@ -29,7 +29,6 @@ exports.getArticles = async (req, res) => {
 						articleImageKey: article.articleImageKey,
 					},
 				};
-
 			})
 		);
 		return res.status(200).send(articlesWithImages ?? articles);
@@ -157,7 +156,6 @@ exports.deleteArticle = async (req, res) => {
 
 	try {
 		const article = await Article.findById(articleId);
-
 		if (!article) {
 			return res.status(404).json({ message: 'article not found' });
 		}

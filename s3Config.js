@@ -70,6 +70,8 @@ const getImageKeysFromEntity = (entity) => {
 		if (entity.pressBookPdfKey) {
 			imageKeys.push(entity.pressBookPdfKey);
 		}
+	} else if (entity.articleImageKey) {
+		imageKeys = entity.articleImageKey;
 	} else {
 		imageKeys = entity.contactImageKey;
 	}
