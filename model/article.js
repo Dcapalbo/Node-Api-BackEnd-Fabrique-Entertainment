@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // contacts Schema
 const articleSchema = new Schema({
-	title: {
+	author: {
 		type: String,
 		required: true,
 	},

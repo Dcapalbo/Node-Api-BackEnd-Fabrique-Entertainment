@@ -42,12 +42,12 @@ exports.getArticles = async (req, res) => {
 
 // POST => add Article
 exports.addArticle = async (req, res) => {
-	const { title, date, tag, description, link } = req.body;
+	const { author, date, tag, description, link } = req.body;
 	// Validate request body using express-validator
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({
-			article: { title, date, tag, description, link },
+			article: { author, date, tag, description, link },
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,
 			validationErrors: errors.array(),
@@ -68,12 +68,12 @@ exports.addArticle = async (req, res) => {
 		);
 
 		//create the key to match with image for S3 AWS
-		const articleImageKey = `articles/${title}/articlePicture/${articleImage.originalname}`;
+		const articleImageKey = `articles/${author}/articlePicture/${articleImage.originalname}`;
 
 		await uploadFile(articleImage, articleImageKey);
 
 		const article = await Article.create({
-			title,
+			author,
 			date,
 			tag,
 			description,
@@ -98,12 +98,12 @@ exports.addArticle = async (req, res) => {
 };
 // PUT => edit the article
 exports.editArticle = async (req, res) => {
-	const { title, date, tag, description, link, _id } = req.body;
+	const { author, date, tag, description, link, _id } = req.body;
 
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).json({
-			article: { title, date, tag, description, link, _id },
+			article: { author, date, tag, description, link, _id },
 			message: 'Validation errors are present',
 			errorMessage: errors.array()[0].msg,
 			validationErrors: errors.array(),
@@ -126,11 +126,11 @@ exports.editArticle = async (req, res) => {
 
 	if (req.files.length > 0) {
 		articleImage = req.files.find((file) => file.fieldname === 'articleImage');
-		articleImageKey = `articles/${title}/articlePicture/${articleImage.originalname}`;
+		articleImageKey = `articles/${author}/articlePicture/${articleImage.originalname}`;
 		await uploadFile(articleImage, articleImageKey);
 	}
 
-	const update = { title, date, tag, description, link, articleImageKey };
+	const update = { author, date, tag, description, link, articleImageKey };
 
 	try {
 		const updatedArticle = await Article.findByIdAndUpdate(_id, update, {

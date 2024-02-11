@@ -17,7 +17,7 @@ router.get('/get-articles', getArticles);
 router.post(
 	'/add-article',
 	[
-		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
+		check('author').isString().isLength({ min: 3, max: 30 }).trim(),
 		check('date').custom((value) => {
 			const date = new Date(value);
 			if (isNaN(date.getTime())) {
@@ -43,7 +43,7 @@ router.post(
 router.put(
 	'/update-article',
 	[
-		check('title').isString().isLength({ min: 3, max: 30 }).trim(),
+		check('author').isString().isLength({ min: 3, max: 30 }).trim(),
 		check('date').custom((value) => {
 			const date = new Date(value);
 			if (isNaN(date.getTime())) {
