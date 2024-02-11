@@ -89,7 +89,10 @@ exports.addContact = async (req, res) => {
 
 		deleteFile('images/' + contactImage.filename);
 
-		return res.status(201).send(contact);
+		return res.status(201).json({
+			message: 'The contact has been created',
+			contact,
+		});
 	} catch (error) {
 		return res.status(500).json({ message: 'Something went wrong.', error });
 	}

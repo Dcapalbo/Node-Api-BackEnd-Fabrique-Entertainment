@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // contacts Schema
 const articleSchema = new Schema({
-	title: {
+	author: {
 		type: String,
 		required: true,
 	},
@@ -25,11 +25,10 @@ const articleSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	newsImageKey: {
+	articleImageKey: {
 		type: String,
-		required: true,
 	},
 });
 
 // / exporting the model and the Schema
-module.exports = mongoose.model('Articles', articleSchema);
+module.exports = mongoose.model('Article', articleSchema);
