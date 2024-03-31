@@ -1,5 +1,6 @@
 /** @format */
 
+const { lengthCheck, optionalUrlCheck } = require('../util/functions');
 const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
@@ -17,7 +18,7 @@ router.get('/get-articles', getArticles);
 router.post(
 	'/add-article',
 	[
-		check('author').isString().isLength({ min: 3, max: 30 }).trim(),
+		lengthCheck('author', 3, 30),
 		check('date').custom((value) => {
 			const date = new Date(value);
 			if (isNaN(date.getTime())) {
@@ -25,17 +26,9 @@ router.post(
 			}
 			return true;
 		}),
-		check('tag').isString().isLength({ min: 5, max: 30 }).trim(),
-		check('description').isString().isLength({ min: 10, max: 5000 }).trim(),
-		check('link')
-			.isURL({
-				protocols: ['http', 'https'],
-				require_tld: true,
-				require_protocol: true,
-			})
-			.withMessage(
-				'Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'
-			),
+		lengthCheck('tag', 3, 30),
+		lengthCheck('description', 10, 5000),
+		optionalUrlCheck('link'),
 	],
 	addArticle
 );
@@ -43,7 +36,7 @@ router.post(
 router.put(
 	'/update-article',
 	[
-		check('author').isString().isLength({ min: 3, max: 30 }).trim(),
+		lengthCheck('author', 3, 30),
 		check('date').custom((value) => {
 			const date = new Date(value);
 			if (isNaN(date.getTime())) {
@@ -51,17 +44,9 @@ router.put(
 			}
 			return true;
 		}),
-		check('tag').isString().isLength({ min: 5, max: 30 }).trim(),
-		check('description').isString().isLength({ min: 10, max: 5000 }).trim(),
-		check('link')
-			.isURL({
-				protocols: ['http', 'https'],
-				require_tld: true,
-				require_protocol: true,
-			})
-			.withMessage(
-				'Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'
-			),
+		lengthCheck('tag', 3, 30),
+		lengthCheck('description', 10, 5000),
+		optionalUrlCheck('link'),
 	],
 	editArticle
 );

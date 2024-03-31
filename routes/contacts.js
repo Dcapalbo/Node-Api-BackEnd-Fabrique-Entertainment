@@ -1,5 +1,5 @@
 /** @format */
-
+const { lengthCheck } = require('../util/functions');
 const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
@@ -17,10 +17,10 @@ router.get('/get-contacts', getContacts);
 router.post(
 	'/add-contact',
 	[
-		check('name').isString().isLength({ min: 3, max: 15 }).trim(),
-		check('surname').isString().isLength({ min: 3, max: 20 }).trim(),
-		check('role').isString().isLength({ min: 5, max: 30 }).trim(),
-		check('bio').isString().isLength({ min: 10, max: 500 }).trim(),
+		lengthCheck('name', 3, 15),
+		lengthCheck('surname', 3, 20),
+		lengthCheck('role', 5, 30),
+		lengthCheck('bio', 10, 500),
 		check('email')
 			.isEmail()
 			.normalizeEmail()
@@ -34,10 +34,10 @@ router.post(
 router.put(
 	'/update-contact',
 	[
-		check('name').isString().isLength({ min: 3, max: 15 }).trim(),
-		check('surname').isString().isLength({ min: 1, max: 20 }).trim(),
-		check('role').isString().isLength({ min: 5, max: 30 }).trim(),
-		check('bio').isString().isLength({ min: 10, max: 500 }).trim(),
+		lengthCheck('name', 3, 15),
+		lengthCheck('surname', 3, 20),
+		lengthCheck('role', 5, 30),
+		lengthCheck('bio', 10, 500),
 		check('email')
 			.isEmail()
 			.normalizeEmail()

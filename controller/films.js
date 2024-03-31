@@ -41,7 +41,7 @@ exports.getFilms = async (req, res) => {
 			})
 		);
 
-		return res.status(200).send(filmsWithImages ? filmsWithImages : films);
+		return res.status(200).send(filmsWithImages ?? films);
 	} catch (error) {
 		return res.status(404).json({ message: 'Films was not found', error });
 	}
@@ -152,10 +152,10 @@ exports.addFilm = async (req, res) => {
 
 		await uploadFile(cover, coverImageKey);
 
-		let pressBook, pressBookPdfKey;
+		const pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
+		let pressBookPdfKey;
 
-		if (req.files.find((file) => file.fieldname === 'pressBookPdf')) {
-			pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
+		if (pressBook) {
 			pressBookPdfKey = `films/${title}/pressbook/${pressBook.originalname}`;
 			await uploadFile(pressBook, pressBookPdfKey);
 		}
