@@ -1,11 +1,5 @@
 /** @format */
 
-const {
-	lengthCheck,
-	validateArrayFieldLength,
-	validateOptionalStringFieldLength,
-	optionalUrlCheck,
-} = require('../util/functions');
 const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
@@ -16,6 +10,13 @@ const {
 	deleteFilm,
 	deleteImage,
 } = require('../controller/films');
+const {
+	validateOptionalStringFieldLength,
+	validateArrayFieldLength,
+	handleValidationErrors,
+	optionalUrlCheck,
+	lengthCheck,
+} = require('../util/functions');
 
 //films => GET ALL
 router.get('/get-films', getFilms);
@@ -147,6 +148,7 @@ router.post(
 		optionalUrlCheck('imdb'),
 		optionalUrlCheck('instagram'),
 		optionalUrlCheck('facebook'),
+		handleValidationErrors,
 	],
 	addFilm
 );
@@ -278,6 +280,7 @@ router.put(
 		optionalUrlCheck('imdb'),
 		optionalUrlCheck('instagram'),
 		optionalUrlCheck('facebook'),
+		handleValidationErrors,
 	],
 	editFilm
 );

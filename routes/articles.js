@@ -1,6 +1,10 @@
 /** @format */
 
-const { lengthCheck, optionalUrlCheck } = require('../util/functions');
+const {
+	lengthCheck,
+	optionalUrlCheck,
+	handleValidationErrors,
+} = require('../util/functions');
 const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
@@ -29,6 +33,7 @@ router.post(
 		lengthCheck('tag', 3, 30),
 		lengthCheck('description', 10, 5000),
 		optionalUrlCheck('link'),
+		handleValidationErrors,
 	],
 	addArticle
 );
@@ -47,6 +52,7 @@ router.put(
 		lengthCheck('tag', 3, 30),
 		lengthCheck('description', 10, 5000),
 		optionalUrlCheck('link'),
+		handleValidationErrors,
 	],
 	editArticle
 );

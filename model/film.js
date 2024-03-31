@@ -103,9 +103,11 @@ const filmSchema = new Schema({
 	},
 	scenography: {
 		type: String,
+		default: null,
 	},
 	costumes: {
 		type: String,
+		default: null,
 	},
 	musics: [
 		{
@@ -121,9 +123,11 @@ const filmSchema = new Schema({
 	},
 	soundDesign: {
 		type: String,
+		default: null,
 	},
 	casting: {
 		type: String,
+		default: null,
 	},
 	lineProducer: {
 		type: String,
@@ -138,22 +142,28 @@ const filmSchema = new Schema({
 	],
 	distributor: {
 		type: String,
+		default: null,
 	},
 	salesAgent: {
 		type: String,
+		default: null,
 	},
 	firstAssistantDirector: {
 		type: String,
+		default: null,
 	},
 	synopsis: {
 		type: String,
 		required: true,
+		default: null,
 	},
 	productionNotes: {
 		type: String,
+		default: null,
 	},
 	directorNotes: {
 		type: String,
+		default: null,
 	},
 	duration: {
 		type: Number,
@@ -189,15 +199,19 @@ const filmSchema = new Schema({
 	},
 	trailer: {
 		type: String,
+		default: null,
 	},
 	imdb: {
 		type: String,
+		default: null,
 	},
 	facebook: {
 		type: String,
+		default: null,
 	},
 	instagram: {
 		type: String,
+		default: null,
 	},
 	slug: {
 		type: String,
@@ -205,9 +219,11 @@ const filmSchema = new Schema({
 	},
 	coverImageKey: {
 		type: String,
+		default: null,
 	},
 	pressBookPdfKey: {
 		type: String,
+		default: null,
 	},
 });
 

@@ -1,8 +1,9 @@
 /** @format */
 
-const { check } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 const path = require('path');
 const fs = require('fs');
+const { uploadFile } = require('../s3Config');
 
 function deleteFile(filePath) {
 	fs.unlink(filePath, (err) => {
@@ -16,21 +17,6 @@ function readImageData(filePath) {
 	const absolutePath = path.join(__dirname, filePath);
 	const imageData = fs.readFileSync(absolutePath);
 	return imageData;
-}
-
-function getContentType(fileExtension) {
-	switch (fileExtension) {
-		case '.jpg':
-		case '.jpeg':
-			return 'image/jpeg';
-		case '.png':
-			return 'image/png';
-		case '.gif':
-			return 'image/gif';
-		// Add more supported file extensions as needed
-		default:
-			return null;
-	}
 }
 
 const lengthCheck = (fieldName, min, max) =>
@@ -99,12 +85,61 @@ const validateArrayFieldLength = (
 	];
 };
 
+const handleValidationErrors = (req, res, next) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
+	next();
+};
+
+async function uploadEntityFiles(req, entityType, entityIdentifier) {
+	const fileKeys = {};
+
+	const entityFileConfig = {
+		films: [
+			{ fieldname: 'coverImage', keyName: 'coverImageKey', required: true },
+			{
+				fieldname: 'pressBookPdf',
+				keyName: 'pressBookPdfKey',
+				required: false,
+			},
+		],
+		articles: [
+			{ fieldname: 'articleImage', keyName: 'articleImageKey', required: true },
+		],
+		contacts: [
+			{ fieldname: 'contactImage', keyName: 'contactImageKey', required: true },
+		],
+	};
+
+	const filesToUpload = entityFileConfig[entityType] || [];
+	console.log(filesToUpload, 'i miei files');
+
+	for (const { fieldname, keyName, required } of filesToUpload) {
+		const file = req.files.find((file) => file.fieldname === fieldname);
+		if (file) {
+			const fileKey = `${entityType}/${entityIdentifier}/${fieldname}/${file.originalname}`;
+			await uploadFile(file, fileKey);
+			fileKeys[keyName] = fileKey;
+			fs.unlinkSync(file.path);
+		} else if (required) {
+			throw new Error(
+				`Il file obbligatorio "${fieldname}" per ${entityType} (${entityIdentifier}) non è stato fornito.`
+			);
+		}
+	}
+
+	return fileKeys;
+}
+
 module.exports = {
 	deleteFile,
 	readImageData,
-	getContentType,
 	lengthCheck,
 	validateOptionalStringFieldLength,
 	optionalUrlCheck,
 	validateArrayFieldLength,
+	handleValidationErrors,
+	uploadEntityFiles,
 };

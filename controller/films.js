@@ -9,7 +9,6 @@ const {
 	deleteImageFromS3,
 	getImageKeysFromEntity,
 } = require('../s3Config');
-const film = require('../model/film');
 
 // GET => Getting all films
 exports.getFilms = async (req, res) => {
@@ -152,7 +151,10 @@ exports.addFilm = async (req, res) => {
 
 		await uploadFile(cover, coverImageKey);
 
-		const pressBook = req.files.find((file) => file.fieldname === 'pressBookPdf');
+		const pressBook = req.files.find(
+			(file) => file.fieldname === 'pressBookPdf'
+		);
+
 		let pressBookPdfKey;
 
 		if (pressBook) {
@@ -211,6 +213,7 @@ exports.addFilm = async (req, res) => {
 
 		return res.status(201).send(film);
 	} catch (error) {
+		await Promise.all(uploadedFileKeys.map(deleteImageFromS3));
 		return res.status(500).json({ message: 'Something went wrong.', error });
 	}
 };

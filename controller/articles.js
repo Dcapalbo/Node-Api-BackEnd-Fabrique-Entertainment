@@ -1,10 +1,8 @@
 /** @format */
 
-const { validationResult } = require('express-validator');
-const { deleteFile } = require('../util/functions');
+const { uploadEntityFiles } = require('../util/functions');
 const Article = require('../model/article');
 const {
-	uploadFile,
 	getImageUrlFromS3,
 	deleteImageFromS3,
 	getImageKeysFromEntity,
@@ -42,109 +40,104 @@ exports.getArticles = async (req, res) => {
 
 // POST => add Article
 exports.addArticle = async (req, res) => {
-	const { author, date, tag, description, link } = req.body;
-	// Validate request body using express-validator
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({
-			article: { author, date, tag, description, link },
-			message: 'Validation errors are present',
-			errorMessage: errors.array()[0].msg,
-			validationErrors: errors.array(),
-		});
-	}
-
+	let uploadedFileKey; // To keep track of the uploaded file key for cleanup
 	try {
-		// Check if Article already exists in the database
-		const existingArticle = await Article.findOne({ link });
+		// Check if the article already exists
+		const existingArticle = await Article.findOne({ link: req.body.link });
 		if (existingArticle) {
-			return res.status(400).json({
-				message: 'The article has already been registered',
-			});
+			return res
+				.status(400)
+				.json({ message: 'The article has already been registered.' });
 		}
-		//take the image to match with key for S3 AWS
-		const articleImage = req.files.find(
-			(file) => file.fieldname === 'articleImage'
+
+		// Handle the file upload
+		const { articleImageKey } = await uploadEntityFiles(
+			req,
+			'articles',
+			req.body.author
 		);
+		uploadedFileKey = articleImageKey; // Save the uploaded file key for potential cleanup
 
-		//create the key to match with image for S3 AWS
-		const articleImageKey = `articles/${author}/articlePicture/${articleImage.originalname}`;
-
-		await uploadFile(articleImage, articleImageKey);
-
+		// Create the article in the database with validated fields
 		const article = await Article.create({
-			author,
-			date,
-			tag,
-			description,
-			link,
-			articleImageKey,
+			...req.body,
+			articleImageKey, // This field will be undefined if no image was provided/uploaded
 		});
-		// Return success response with created article
-
-		deleteFile('images/' + articleImage.filename);
 
 		res.status(201).json({
-			message: 'The article has been created',
+			message: 'The article has been created successfully.',
 			article,
 		});
 	} catch (err) {
-		// Handle errors
 		console.error('Error creating article: ', err);
-		res.status(500).json({
-			message: 'Internal server error',
-		});
+		// Cleanup uploaded files from S3 in case of error
+		if (uploadedFileKey) {
+			await deleteImageFromS3(uploadedFileKey);
+		}
+		res.status(500).json({ message: 'Internal server error.' });
 	}
 };
 // PUT => edit the article
 exports.editArticle = async (req, res) => {
-	const { author, date, tag, description, link, _id } = req.body;
+	// Extract the article ID from the request body
+	const { _id } = req.body;
 
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(422).json({
-			article: { author, date, tag, description, link, _id },
-			message: 'Validation errors are present',
-			errorMessage: errors.array()[0].msg,
-			validationErrors: errors.array(),
-		});
-	}
-
+	// Return an error if the ID is missing from the request
 	if (!_id) {
-		res.status(404).json({
-			message:
-				'Was not possible to update the specific article, because the id is missing',
+		return res.status(404).json({
+			message: 'Unable to update the article because the ID is missing.',
 		});
 	}
 
-	let articleImageKey;
-	let articleImage;
-
-	if (req.body.articleImage) {
-		articleImageKey = req.body.articleImage;
-	}
-
-	if (req.files.length > 0) {
-		articleImage = req.files.find((file) => file.fieldname === 'articleImage');
-		articleImageKey = `articles/${author}/articlePicture/${articleImage.originalname}`;
-		await uploadFile(articleImage, articleImageKey);
-	}
-
-	const update = { author, date, tag, description, link, articleImageKey };
+	// Variable to keep track of any uploaded file's key for potential cleanup
+	let uploadedFileKey = null;
 
 	try {
+		// Verify that the article exists in the database
+		const existingArticle = await Article.findById(_id);
+		if (!existingArticle) {
+			return res.status(404).json({ message: 'Article not found.' });
+		}
+
+		// Start with all the validated fields from the request for the update
+		let update = { ...req.body };
+
+		// Handle a new image upload, if provided
+		if (req.files.length > 0) {
+			const uploadResult = await uploadEntityFiles(
+				req,
+				'articles',
+				existingArticle.author
+			);
+			if (uploadResult.articleImageKey) {
+				// Update the articleImageKey only if a new image has been successfully uploaded
+				update.articleImageKey = uploadResult.articleImageKey;
+				uploadedFileKey = update.articleImageKey; // Keep track of the uploaded file key for cleanup
+			}
+		}
+
+		// Update the article in the database with the new values
 		const updatedArticle = await Article.findByIdAndUpdate(_id, update, {
 			new: true,
 		});
 
-		if (articleImage) {
-			deleteFile('images/' + articleImage.filename);
+		// Respond with the updated article and a success message
+		return res.status(200).json({
+			message: 'The article has been updated successfully.',
+			article: updatedArticle,
+		});
+	} catch (error) {
+		console.error('Error updating article: ', error);
+
+		// If an error occurred after uploading a file to S3, clean up the uploaded file
+		if (uploadedFileKey) {
+			// Ensure the deleteImageFromS3 function exists and is implemented correctly
+			await deleteImageFromS3(uploadedFileKey);
 		}
 
-		return res.status(200).send(updatedArticle);
-	} catch (error) {
-		res.status(500).json({
-			message: 'Was not possible to update the specific article.',
+		// Respond with an error message if the update process fails
+		return res.status(500).json({
+			message: 'Unable to update the specified article.',
 			error,
 		});
 	}
