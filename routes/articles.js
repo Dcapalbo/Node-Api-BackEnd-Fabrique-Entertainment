@@ -3,13 +3,7 @@
 const { check } = require('express-validator');
 const express = require('express');
 const router = express.Router();
-const {
-	getArticles,
-	addArticle,
-	editArticle,
-	deleteArticle,
-	deleteImage,
-} = require('../controller/articles');
+const { getArticles, addArticle, editArticle, deleteArticle, deleteImage } = require('../controller/articles');
 
 //articles => GET
 router.get('/get-articles', getArticles);
@@ -33,13 +27,11 @@ router.post(
 				require_tld: true,
 				require_protocol: true,
 			})
-			.withMessage(
-				'Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'
-			),
+			.withMessage('Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'),
 	],
 	addArticle
 );
-//update-article => PUT
+//update-article => POC
 router.put(
 	'/update-article',
 	[
@@ -59,9 +51,7 @@ router.put(
 				require_tld: true,
 				require_protocol: true,
 			})
-			.withMessage(
-				'Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'
-			),
+			.withMessage('Il trailer deve essere un URL valido con il protocollo HTTP o HTTPS'),
 	],
 	editArticle
 );
